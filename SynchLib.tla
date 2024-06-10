@@ -38,8 +38,15 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 
 
 \* ----- TYPE PROPERTY -----
-\* All messages must have a time and some non-null payload.
+\* All messages must have a time.
 \* The time must be greater than or equal to 0
+\* TODO: can we check that payload exists?
+
+TypeOK ==
+    /\ t >= 0
+    /\ \A msg \in sentMsgs : (msg.time >= 0)
+    /\ \A msg \in deliveredMsgs : (msg.time >= 0)
+    /\ rcvQueue \in SUBSET deliveredMsgs
 
 \* ----- HELPER PREDICATES -----
 
@@ -57,7 +64,7 @@ UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredM
 \* Note: because each message must be unique due to the changing logical time,
 \* We do not need to check whether it's already in the set
 SndMsg(payload) ==
-    /\ ~urgentMsg
+    /\ ~UrgentMsg
     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
     /\ t' = t + 1
     /\ UNCHANGED<<deliveredMsgs, rcvQueue, latestMsg>>
@@ -68,7 +75,7 @@ SndMsg(payload) ==
 DeliverMsg(msg) ==
     /\ msg \in sentMsgs
     /\ ~(msg \in deliveredMsgs)
-    /\ (msg.time + Delta = t \/ ~urgentMsg)
+    /\ (msg.time + Delta = t \/ ~UrgentMsg)
     /\ deliveredMsgs' = deliveredMsgs \cup {msg}
     /\ rcvQueue' = Append(rcvQueue, msg)
     /\ t' = t + 1
