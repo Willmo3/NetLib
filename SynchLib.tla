@@ -54,16 +54,18 @@ urgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredM
 \* Note: because each message must be unique due to the changing logical time,
 \* We do not need to check whether it's already in the set
 sndMsg(msg) ==
+    /\ ~urgentMsg
     /\ sentMsgs' = sentMsgs \cup {msg}
     /\ t' = t + 1
     /\ UNCHANGED<<msgs, deliveredMsgs, rcvQueue, latestMsg>>
 
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
-
+\* (Or if this is the message that needs to be delivered right now!)
 deliverMsg(msg) ==
     /\ msg \in sentMsgs
     /\ ~(msg \in deliveredMsgs)
+    /\ (msg.time + Delta = t \/ ~urgentMsg)
     /\ deliveredMsgs' = deliveredMsgs \cup {msg}
     /\ rcvQueue' = Append(rcvQueue, msg)
     /\ t' = t + 1
