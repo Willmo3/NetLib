@@ -22,6 +22,10 @@ VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg
 
 vars == <<t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg>>
 
+\* ALLOW EXTERNAL ACCESS
+\* TODO: look into whether this is valid.
+RcvQueue == rcvQueue
+LatestMsg == latestMsg
 
 \* ----- SAFETY PROPERTIES -----
 
@@ -109,6 +113,8 @@ Init ==
 \* Or send one
 Next ==
     \/ \E msg \in sentMsgs : DeliverMsg(msg)
-    \/ SndMsg({})
+
+\* Specification for this model.
+Spec == Init /\ [][Next]_vars
 
 ====
