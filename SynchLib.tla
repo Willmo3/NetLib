@@ -29,13 +29,22 @@ vars == <<msgs, t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg>>
 \* And more than \delta time has passed since it was recieved
 \* Then a safety property is violated!
 
-AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
+allRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
 \* For all recieved messages,
 \* If that message was never sent
 \* Then a safety property is violated!
 
-AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+allRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+
+
+\* ----- HELPER PREDICATES -----
+
+\* Is there a message that urgently needs to be delivered?
+\* This is true if there's a message which:
+\* -- Is about to expire its max delivery time
+\* -- Hasn't yet been delivered
+urgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredMsgs))
 
 
 \* ----- STATES -----
@@ -44,21 +53,21 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 
 \* Note: because each message must be unique due to the changing logical time,
 \* We do not need to check whether it's already in the set
-SndMessage(msg) ==
+sndMsg(msg) ==
     /\ sentMsgs' = sentMsgs \cup {msg}
     /\ t' = t + 1
-    /\ UNCHANGED<<deliveredMsgs, rcvQueue, latestMsg>>
+    /\ UNCHANGED<<msgs, deliveredMsgs, rcvQueue, latestMsg>>
 
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
 
-DeliverMsg(msg) ==
+deliverMsg(msg) ==
     /\ msg \in sentMsgs
     /\ ~(msg \in deliveredMsgs)
     /\ deliveredMsgs' = deliveredMsgs \cup {msg}
     /\ rcvQueue' = Append(rcvQueue, msg)
     /\ t' = t + 1
-    /\ UNCHANGED<<sentMsgs, latestMsg>>
+    /\ UNCHANGED<<msgs, sentMsgs, latestMsg>>
 
 \* A message may be recieved from the destination queue
 \* Whenever there's one there to be recieved.
@@ -67,7 +76,7 @@ rcvMsg ==
     /\ Len(rcvQueue) > 0
     /\ latestMsg' = Head(rcvQueue)
     /\ rcvQueue' = Tail(rcvQueue)
-    /\ UNCHANGED<<t, sentMsgs, deliveredMsgs>>
+    /\ UNCHANGED<<msgs, t, sentMsgs, deliveredMsgs>>
 
 \* NOTE: change msgs to change what's inside!
 Init == 
