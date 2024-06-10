@@ -94,6 +94,9 @@ RcvMsg ==
     /\ rcvQueue' = Tail(rcvQueue)
     /\ UNCHANGED<<t, sentMsgs, deliveredMsgs>>
 
+
+\* ----- MODEL RUNNERS -----
+
 \* NOTE: change msgs to change what's inside!
 Init == 
     /\ t = 0
@@ -102,9 +105,10 @@ Init ==
     /\ rcvQueue = <<>>
     /\ latestMsg = 0
 
-\* A message contains at least a timestep plus some user-defined payload.
-\* Message == [time: {0..N}, ...]
-
-\*     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
+\* Either deliver a msg
+\* Or send one
+Next ==
+    \/ \E msg \in sentMsgs : DeliverMsg(msg)
+    \/ SndMsg({})
 
 ====
