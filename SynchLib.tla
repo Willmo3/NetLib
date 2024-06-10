@@ -1,5 +1,5 @@
 ---- MODULE SynchLib ----
-EXTENDS TLC
+EXTENDS TLC, Integers
 
 \* CONSTANTS
 \* Not defined in model cfg file to support recomp-verify
@@ -17,7 +17,6 @@ VARIABLES t, sentMsgs, rcvedMsgs, rcvQueue
 
 vars == <<t, sentMsgs, rcvedMsgs, rcvQueue>>
 
-
 \* SAFETY PROPERTIES
 \* Synchronous network communication includes an upper bound on message delivery time.
 \* Hence, it can be represented by the following two safety properties:
@@ -27,9 +26,13 @@ vars == <<t, sentMsgs, rcvedMsgs, rcvQueue>>
 \* And more than \delta time has passed since it was recieved
 \* Then a safety property is violated!
 
+AllRcvedInTime == \A msg \in sentMsgs : (msg \in rcvedMsgs \/ t <= msg.time + Delta)
+
 \* For all recieved messages,
 \* If that message was never sent
 \* Then a safety property is violated!
+
+AllRcvedSent == \A msg \in rcvedMsgs : msg \in sentMsgs
 
 
 
