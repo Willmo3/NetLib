@@ -28,14 +28,18 @@ vars == <<t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg>>
 \* And more than \delta time has passed since it was recieved
 \* Then a safety property is violated!
 
-allRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
+AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
 \* For all recieved messages,
 \* If that message was never sent
 \* Then a safety property is violated!
 
-allRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 
+
+\* ----- TYPE PROPERTY -----
+\* All messages must have a time and some non-null payload.
+\* The time must be greater than or equal to 0
 
 \* ----- HELPER PREDICATES -----
 
@@ -43,7 +47,7 @@ allRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 \* This is true if there's a message which:
 \* -- Is about to expire its max delivery time
 \* -- Hasn't yet been delivered
-urgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredMsgs))
+UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredMsgs))
 
 
 \* ----- STATES -----
@@ -52,7 +56,7 @@ urgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredM
 
 \* Note: because each message must be unique due to the changing logical time,
 \* We do not need to check whether it's already in the set
-sndMsg(payload) ==
+SndMsg(payload) ==
     /\ ~urgentMsg
     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
     /\ t' = t + 1
@@ -61,7 +65,7 @@ sndMsg(payload) ==
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
 \* (Or if this is the message that needs to be delivered right now!)
-deliverMsg(msg) ==
+DeliverMsg(msg) ==
     /\ msg \in sentMsgs
     /\ ~(msg \in deliveredMsgs)
     /\ (msg.time + Delta = t \/ ~urgentMsg)
@@ -73,7 +77,7 @@ deliverMsg(msg) ==
 \* A message may be recieved from the destination queue
 \* Whenever there's one there to be recieved.
 \* This is considered separate from
-rcvMsg ==
+RcvMsg ==
     /\ Len(rcvQueue) > 0
     /\ latestMsg' = Head(rcvQueue)
     /\ rcvQueue' = Tail(rcvQueue)
