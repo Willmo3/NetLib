@@ -22,11 +22,6 @@ VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg
 
 vars == <<t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg>>
 
-\* ALLOW EXTERNAL ACCESS
-\* TODO: look into whether this is valid.
-RcvQueue == rcvQueue
-LatestMsg == latestMsg
-
 \* ----- SAFETY PROPERTIES -----
 
 \* Synchronous network communication includes an upper bound on message delivery time.
