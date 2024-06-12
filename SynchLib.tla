@@ -74,13 +74,13 @@ SndMsg(payload) ==
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
 \* (Or if this is the message that needs to be delivered right now!)
-DeliverMsg(msg) ==
-    /\ msg \in sentMsgs
-    /\ ~(msg \in deliveredMsgs)
-    /\ (msg.time + Delta = t \/ ~UrgentMsg)
-    /\ deliveredMsgs' = deliveredMsgs \cup {msg}
-    /\ rcvQueue' = Append(rcvQueue, msg)
-    /\ t' = t + 1
+DeliverMsg ==
+    /\ \E msg \in sentMsgs: (
+        /\ (msg.time + Delta = t \/ ~UrgentMsg)
+        /\ ~(msg \in deliveredMsgs)
+        /\ deliveredMsgs' = deliveredMsgs \cup {msg}
+        /\ rcvQueue' = Append(rcvQueue, msg.payload)
+        /\ t' = t + 1)
     /\ UNCHANGED<<sentMsgs>>
 
 

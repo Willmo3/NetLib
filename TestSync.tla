@@ -2,45 +2,58 @@
 EXTENDS TLC, Integers, Sequences
 
 \* This tests the sychronous lib with a litany of messages.
-
-Net == INSTANCE SynchLib WITH 
-    t <- 0, 
-    sentMsgs <- {},
-    deliveredMsgs <- {},
-    rcvQueue <- <<>>,
-    latestMsg <- {}
-
-\* Send three messages, then dequeue them once recieved.
-\* Goal: recieved messages should eventually be identical to messages
+\* Parallel composition of this testing with SynchLib.
 
 Payloads == {1, 2, 3}
 
-VARIABLES sntPayloads, rcvedPayloads
-vars == <<sntPayloads, rcvedPayloads>>
+VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
+vars == <<t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads>>
 
-\* Recieve the payload of the latest message recieved.
-\* TODO: eventually, maybe put this in synch lib?
-RcvPayload ==
-    /\ Len(Net!RcvQueue) > 0
-    /\ Net!RcvMsg
-    /\ rcvedPayloads = rcvedPayloads \cup {Net!LatestMsg.payload}
+\* Variables local to network abstraction.
+localVars == <<sentPayloads, rcvPayloads>>
 
-\* Goal: eventually, every payload that we sent will be recieved.
-\* AllRecieved == <>(rcvedPayloads = Payloads)
+\* Variables
 
-Init ==
-    /\ sntPayloads = {}
-    /\ rcvedPayloads = {}
+Net == INSTANCE SynchLib WITH 
+    t <- t,
+    sentMsgs <- sentMsgs,
+    deliveredMsgs <- deliveredMsgs,
+    rcvQueue <- rcvQueue
+
+\* Compose our ops with next ones.
+
+SndMsg(payload) ==
+    /\ ~(payload \in sentPayloads)
+    /\ Net!SndMsg(payload)
+    /\ sentPayloads' = sentPayloads \cup {payload}
+    /\ UNCHANGED <<rcvPayloads, rcvQueue, deliveredMsgs>>
+
+RcvMsg ==
+    /\ Len(rcvQueue) > 0
+    /\ rcvPayloads' = rcvPayloads \cup {Head(rcvQueue)}
+    /\ rcvQueue' = Tail(rcvQueue)
+    /\ UNCHANGED <<t, sentMsgs, deliveredMsgs, sentPayloads>>
+
+DeliverMsg ==
+    /\ Net!DeliverMsg
+    /\ UNCHANGED <<localVars>>
 
 \* Note: once all messages are sent, this will terminate.
 \* Will need to add in the stuttering steps to prevent this. 
-Next ==
-    \/ (\E payload \in Payloads:
-        /\ ~(payload \in sntPayloads)
-        /\ Net!SndMsg(payload))
-    \/ RcvPayload
 
-Spec == (Init /\ Net!Init) /\ [][Next \/ Net!Next]_vars
-THEOREM Spec => Net!Spec
+Init ==
+    /\ sentPayloads = {}
+    /\ rcvPayloads = {}
+    /\ Net!Init
+
+Next ==
+    \/ \E payload \in Payloads: SndMsg(payload)
+    \/ DeliverMsg
+    \/ RcvMsg
+    
+Spec == Init /\ [][Next]_vars
+
+\* Goal: eventually, every payload that we sent will be recieved.
+\* AllRecieved == <>(rcvedPayloads = Payloads)
 
 ====
