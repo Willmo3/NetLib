@@ -17,10 +17,9 @@ Delta == 32
 \* sentMsgs: set of all messages explicitly sent by our system
 \* deliveredMsgs: set of all messages delivered by our system
 \* rcvQueue: queue of messages to be recieved.
-\* latestMsg: last message dequeued. Since dequeue is an action called externally.
-VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg
+VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue
 
-vars == <<t, sentMsgs, deliveredMsgs, rcvQueue, latestMsg>>
+vars == <<t, sentMsgs, deliveredMsgs, rcvQueue>>
 
 \* ----- SAFETY PROPERTIES -----
 
@@ -70,7 +69,7 @@ SndMsg(payload) ==
     /\ ~UrgentMsg
     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
     /\ t' = t + 1
-    /\ UNCHANGED<<deliveredMsgs, rcvQueue, latestMsg>>
+    /\ UNCHANGED<<deliveredMsgs, rcvQueue>>
 
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
@@ -82,16 +81,7 @@ DeliverMsg(msg) ==
     /\ deliveredMsgs' = deliveredMsgs \cup {msg}
     /\ rcvQueue' = Append(rcvQueue, msg)
     /\ t' = t + 1
-    /\ UNCHANGED<<sentMsgs, latestMsg>>
-
-\* A message may be recieved from the destination queue
-\* Whenever there's one there to be recieved.
-\* This is considered separate from
-RcvMsg ==
-    /\ Len(rcvQueue) > 0
-    /\ latestMsg' = Head(rcvQueue)
-    /\ rcvQueue' = Tail(rcvQueue)
-    /\ UNCHANGED<<t, sentMsgs, deliveredMsgs>>
+    /\ UNCHANGED<<sentMsgs>>
 
 
 \* ----- MODEL RUNNERS -----
@@ -102,14 +92,5 @@ Init ==
     /\ sentMsgs = {}
     /\ deliveredMsgs = {}
     /\ rcvQueue = <<>>
-    /\ latestMsg = 0
-
-\* Either deliver a msg
-\* Or send one
-Next ==
-    \/ \E msg \in sentMsgs : DeliverMsg(msg)
-
-\* Specification for this model.
-Spec == Init /\ [][Next]_vars
 
 ====
