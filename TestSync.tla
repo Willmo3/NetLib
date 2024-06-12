@@ -56,4 +56,20 @@ Spec == Init /\ [][Next]_vars
 \* Goal: eventually, every payload that we sent will be recieved.
 \* AllRecieved == <>(rcvedPayloads = Payloads)
 
+\* ----- SAFETY PROPERTIES -----
+
+\* Synchronous network communication includes an upper bound on message delivery time.
+\* Hence, it can be represented by the following two safety properties:
+
+\* For all sent messages,
+\* If at any point, that message is not in the set of recieved messages
+\* And more than \delta time has passed since it was recieved
+\* Then a safety property is violated!
+AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Net!Delta)
+
+\* For all recieved messages,
+\* If that message was never sent
+\* Then a safety property is violated!
+AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+
 ====
