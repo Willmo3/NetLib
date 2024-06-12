@@ -38,6 +38,10 @@ DeliverMsg ==
     /\ Net!DeliverMsg
     /\ UNCHANGED <<localVars>>
 
+IncTime ==
+    /\ Net!IncTime
+    /\ UNCHANGED <<localVars>>
+
 \* Note: once all messages are sent, this will terminate.
 \* Will need to add in the stuttering steps to prevent this. 
 
@@ -50,6 +54,7 @@ Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
     \/ DeliverMsg
     \/ RcvMsg
+    \/ IncTime
     
 Spec == Init /\ [][Next]_vars
 

@@ -83,6 +83,11 @@ DeliverMsg ==
         /\ t' = t + 1)
     /\ UNCHANGED<<sentMsgs>>
 
+\* To represent network delays, the network time can be incremented randomly at any point.
+IncTime ==
+    /\ ~UrgentMsg
+    /\ t' = t + 1
+    /\ UNCHANGED<<sentMsgs, deliveredMsgs, rcvQueue>>
 
 \* ----- MODEL RUNNERS -----
 
