@@ -13,8 +13,6 @@ vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
 \* Variables local to network abstraction.
 localVars == <<sentPayloads, rcvPayloads>>
 
-\* Variables
-
 Net == INSTANCE SynchLib WITH 
     Delta <- Delta,
     t <- t,
@@ -22,8 +20,7 @@ Net == INSTANCE SynchLib WITH
     deliveredMsgs <- deliveredMsgs,
     rcvQueue <- rcvQueue
 
-\* Compose our ops with next ones.
-
+\* COMPOSED OPERATIONS
 SndMsg(payload) ==
     /\ ~(payload \in sentPayloads)
     /\ Net!SndMsg(payload)
@@ -44,9 +41,7 @@ IncTime ==
     /\ Net!IncTime
     /\ UNCHANGED <<Delta, localVars>>
 
-\* Note: once all messages are sent, this will terminate.
-\* Will need to add in the stuttering steps to prevent this. 
-
+\* SPECIFICATION
 Init ==
     /\ sentPayloads = {}
     /\ rcvPayloads = {}
