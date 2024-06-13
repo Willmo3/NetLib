@@ -36,6 +36,9 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 \* All messages must have a time.
 \* The time must be greater than or equal to 0
 
+\* TODO: Delta should be >= 2? Need some time to send, recv
+\* TODO: these are not type invariants -- look into splitting / changing
+\* TODO: pick a type for oaykiad
 TypeOK ==
     /\ Delta > 0
     /\ t >= 0
@@ -50,6 +53,8 @@ TypeOK ==
 \* This is true if there's a message which:
 \* -- Is about to expire its max delivery time
 \* -- Hasn't yet been delivered
+
+\* TODO: look into not in operator
 UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredMsgs))
 
 
@@ -70,7 +75,7 @@ SndMsg(payload) ==
 \* (Or if this is the message that needs to be delivered right now!)
 DeliverMsg ==
     /\ \E msg \in sentMsgs: (
-        /\ (msg.time + Delta = t \/ ~UrgentMsg)
+        /\ UrgentMsg => msg.time + Delta = t
         /\ ~(msg \in deliveredMsgs)
         /\ deliveredMsgs' = deliveredMsgs \cup {msg}
         /\ rcvQueue' = Append(rcvQueue, msg.payload)
