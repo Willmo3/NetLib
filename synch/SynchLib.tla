@@ -43,6 +43,7 @@ TypeOK ==
     /\ \A msg \in deliveredMsgs : (msg.time >= 0)
     /\ Len(rcvQueue) = 0 \/ (\E msg \in deliveredMsgs: msg.payload = Head(rcvQueue))
 
+
 \* ----- HELPER PREDICATES -----
 
 \* Is there a message that urgently needs to be delivered?
@@ -81,6 +82,7 @@ IncTime ==
     /\ ~UrgentMsg
     /\ t' = t + 1
     /\ UNCHANGED<<Delta,sentMsgs, deliveredMsgs, rcvQueue>>
+
 
 \* ----- MODEL RUNNERS -----
 
