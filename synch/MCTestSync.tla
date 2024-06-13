@@ -22,7 +22,7 @@ Net == INSTANCE SynchLib WITH
 
 \* COMPOSED OPERATIONS
 SndMsg(payload) ==
-    /\ ~(payload \in sentPayloads)
+    /\ payload \notin sentPayloads
     /\ Net!SndMsg(payload)
     /\ sentPayloads' = sentPayloads \cup {payload}
     /\ UNCHANGED <<Delta, rcvPayloads, rcvQueue, deliveredMsgs>>

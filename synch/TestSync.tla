@@ -6,13 +6,18 @@ EXTENDS TLC, Integers, Sequences
 
 Payloads == {1, 2, 3}
 
+\* TODO: eventually cond?
+
 \* Delta: maximum sync time bound.
 VARIABLES Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
 vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads>>
 
+\* TODO: don't reference shared variables
+
 \* Variables local to network abstraction.
 localVars == <<sentPayloads, rcvPayloads>>
 
+\* Change Delta to constant.
 Net == INSTANCE SynchLib WITH 
     Delta <- Delta,
     t <- t,
@@ -22,7 +27,7 @@ Net == INSTANCE SynchLib WITH
 
 \* COMPOSED OPERATIONS
 SndMsg(payload) ==
-    /\ ~(payload \in sentPayloads)
+    /\ payload \notin sentPayloads
     /\ Net!SndMsg(payload)
     /\ sentPayloads' = sentPayloads \cup {payload}
     /\ UNCHANGED <<Delta, rcvPayloads, rcvQueue, deliveredMsgs>>

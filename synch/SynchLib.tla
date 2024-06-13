@@ -55,7 +55,7 @@ TypeOK ==
 \* -- Hasn't yet been delivered
 
 \* TODO: look into not in operator
-UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ ~(msg \in deliveredMsgs))
+UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin deliveredMsgs)
 
 
 \* ----- STATES -----
@@ -76,7 +76,7 @@ SndMsg(payload) ==
 DeliverMsg ==
     /\ \E msg \in sentMsgs: (
         /\ UrgentMsg => msg.time + Delta = t
-        /\ ~(msg \in deliveredMsgs)
+        /\ msg \notin deliveredMsgs
         /\ deliveredMsgs' = deliveredMsgs \cup {msg}
         /\ rcvQueue' = Append(rcvQueue, msg.payload)
         /\ t' = t + 1)
@@ -98,5 +98,7 @@ Init ==
     /\ sentMsgs = {}
     /\ deliveredMsgs = {}
     /\ rcvQueue = <<>>
+
+\* TODO: By convention, include next
 
 ====
