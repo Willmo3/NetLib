@@ -8,7 +8,7 @@ EXTENDS TLC, Integers, Sequences
 
 \* The upper bound on time between message delivery.
 \* Must be at least two -- i.e. one time step to send message and one time step to deliver
-Delta == 32
+Delta == 16
 
 
 \* ----- VARIABLES -----
