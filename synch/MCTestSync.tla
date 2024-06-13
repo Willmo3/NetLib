@@ -6,7 +6,7 @@ EXTENDS TLC, Integers, Sequences
 
 Payloads == {1, 2, 3}
 
-\* Delta: maximum time between.
+\* Delta: maximum sync time bound.
 VARIABLES Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
 vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads>>
 
@@ -61,23 +61,9 @@ Next ==
     
 Spec == Init /\ [][Next]_vars
 
-\* Goal: eventually, every payload that we sent will be recieved.
-\* AllRecieved == <>(rcvedPayloads = Payloads)
+\* Imported safety properties
 
-\* ----- SAFETY PROPERTIES -----
-
-\* Synchronous network communication includes an upper bound on message delivery time.
-\* Hence, it can be represented by the following two safety properties:
-
-\* For all sent messages,
-\* If at any point, that message is not in the set of recieved messages
-\* And more than \delta time has passed since it was recieved
-\* Then a safety property is violated!
-AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
-
-\* For all recieved messages,
-\* If that message was never sent
-\* Then a safety property is violated!
-AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+AllRcvedInTime == Net!AllRcvedInTime 
+AllRcvedSent == Net!AllRcvedSent
 
 ====
