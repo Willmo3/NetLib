@@ -2,24 +2,16 @@
 EXTENDS TLC, Integers, Sequences
 
 
-\* ----- CONSTANTS -----
-
-\* Not defined in model cfg file to support recomp-verify
-
-\* The upper bound on time between message delivery.
-\* Must be at least two -- i.e. one time step to send message and one time step to deliver
-Delta == 16
-
-
 \* ----- VARIABLES -----
 
+\* delta: upper bound on time. MUST be substituted in!
 \* t: current logical time
 \* sentMsgs: set of all messages explicitly sent by our system
 \* deliveredMsgs: set of all messages delivered by our system
 \* rcvQueue: queue of messages to be recieved.
-VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue
+VARIABLES Delta, t, sentMsgs, deliveredMsgs, rcvQueue
 
-vars == <<t, sentMsgs, deliveredMsgs, rcvQueue>>
+vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue>>
 
 \* ----- SAFETY PROPERTIES -----
 
@@ -40,11 +32,12 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 
 \* ----- TYPE PROPERTY -----
 
+\* Delta must be at least one.
 \* All messages must have a time.
 \* The time must be greater than or equal to 0
-\* TODO: can we check that payload exists?
 
 TypeOK ==
+    /\ Delta > 0
     /\ t >= 0
     /\ \A msg \in sentMsgs : (msg.time >= 0)
     /\ \A msg \in deliveredMsgs : (msg.time >= 0)
@@ -69,7 +62,7 @@ SndMsg(payload) ==
     /\ ~UrgentMsg
     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
     /\ t' = t + 1
-    /\ UNCHANGED<<deliveredMsgs, rcvQueue>>
+    /\ UNCHANGED<<Delta, deliveredMsgs, rcvQueue>>
 
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
@@ -81,17 +74,18 @@ DeliverMsg ==
         /\ deliveredMsgs' = deliveredMsgs \cup {msg}
         /\ rcvQueue' = Append(rcvQueue, msg.payload)
         /\ t' = t + 1)
-    /\ UNCHANGED<<sentMsgs>>
+    /\ UNCHANGED<<Delta, sentMsgs>>
 
 \* To represent network delays, the network time can be incremented randomly at any point.
 IncTime ==
     /\ ~UrgentMsg
     /\ t' = t + 1
-    /\ UNCHANGED<<sentMsgs, deliveredMsgs, rcvQueue>>
+    /\ UNCHANGED<<Delta,sentMsgs, deliveredMsgs, rcvQueue>>
 
 \* ----- MODEL RUNNERS -----
 
 \* NOTE: change msgs to change what's inside!
+\* Delta not initialized -- must be substituted in!
 Init == 
     /\ t = 0
     /\ sentMsgs = {}

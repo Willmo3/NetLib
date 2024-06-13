@@ -6,8 +6,9 @@ EXTENDS TLC, Integers, Sequences
 
 Payloads == {1, 2, 3}
 
-VARIABLES t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
-vars == <<t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads>>
+\* Delta: maximum sync time bound.
+VARIABLES Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
+vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads>>
 
 \* Variables local to network abstraction.
 localVars == <<sentPayloads, rcvPayloads>>
@@ -15,6 +16,7 @@ localVars == <<sentPayloads, rcvPayloads>>
 \* Variables
 
 Net == INSTANCE SynchLib WITH 
+    Delta <- Delta,
     t <- t,
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs,
@@ -26,21 +28,21 @@ SndMsg(payload) ==
     /\ ~(payload \in sentPayloads)
     /\ Net!SndMsg(payload)
     /\ sentPayloads' = sentPayloads \cup {payload}
-    /\ UNCHANGED <<rcvPayloads, rcvQueue, deliveredMsgs>>
+    /\ UNCHANGED <<Delta, rcvPayloads, rcvQueue, deliveredMsgs>>
 
 RcvMsg ==
     /\ Len(rcvQueue) > 0
     /\ rcvPayloads' = rcvPayloads \cup {Head(rcvQueue)}
     /\ rcvQueue' = Tail(rcvQueue)
-    /\ UNCHANGED <<t, sentMsgs, deliveredMsgs, sentPayloads>>
+    /\ UNCHANGED <<Delta, t, sentMsgs, deliveredMsgs, sentPayloads>>
 
 DeliverMsg ==
     /\ Net!DeliverMsg
-    /\ UNCHANGED <<localVars>>
+    /\ UNCHANGED <<Delta, localVars>>
 
 IncTime ==
     /\ Net!IncTime
-    /\ UNCHANGED <<localVars>>
+    /\ UNCHANGED <<Delta, localVars>>
 
 \* Note: once all messages are sent, this will terminate.
 \* Will need to add in the stuttering steps to prevent this. 
@@ -48,6 +50,7 @@ IncTime ==
 Init ==
     /\ sentPayloads = {}
     /\ rcvPayloads = {}
+    /\ Delta = 16
     /\ Net!Init
 
 Next ==
@@ -70,7 +73,7 @@ Spec == Init /\ [][Next]_vars
 \* If at any point, that message is not in the set of recieved messages
 \* And more than \delta time has passed since it was recieved
 \* Then a safety property is violated!
-AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Net!Delta)
+AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
 \* For all recieved messages,
 \* If that message was never sent
