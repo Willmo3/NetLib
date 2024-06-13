@@ -17,3 +17,7 @@ We present NetLib, a TLA+ library for modeling network communication. We will su
 3. Partially Synchronous
 
 NetLib encapsulates common network environmental assumptions in a modular and reusable way, enabling modelers to quickly evaluate robustness under varied conditions while avoiding tight coupling between the internal system model and the environmental model.
+
+## Usage
+
+Because TLA+ is not a standard programming language, models cannot simply be imported. Instead, to use NetLib, one must define a *parallel composition* of their model with NetLib. For an example of this, please view our testing files.
