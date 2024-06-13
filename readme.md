@@ -21,3 +21,10 @@ NetLib encapsulates common network environmental assumptions in a modular and re
 ## Usage
 
 Because TLA+ is not a standard programming language, models cannot simply be imported. Instead, to use NetLib, one must define a *parallel composition* of their model with NetLib. For an example of this, please view our testing files.
+
+### Required Variables
+- Delta: the maximum time bound between network communication. This is treated as a constant.
+- t: the logical time. 
+- sentMsgs: the set of all messages explicitly sent by our system.
+- deliveredMsgs: the set of all messages delivered by our system.
+- rcvQueue: queue of all messages to be received. Interactions with rcvQueue are defined by implementers.
