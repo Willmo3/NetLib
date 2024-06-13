@@ -41,7 +41,7 @@ TypeOK ==
     /\ t >= 0
     /\ \A msg \in sentMsgs : (msg.time >= 0)
     /\ \A msg \in deliveredMsgs : (msg.time >= 0)
-    /\ rcvQueue \in SUBSET deliveredMsgs
+    /\ Len(rcvQueue) = 0 \/ (\E msg \in deliveredMsgs: msg.payload = Head(rcvQueue))
 
 \* ----- HELPER PREDICATES -----
 

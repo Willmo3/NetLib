@@ -65,5 +65,6 @@ Spec == Init /\ [][Next]_vars
 
 AllRcvedInTime == Net!AllRcvedInTime 
 AllRcvedSent == Net!AllRcvedSent
+TypeOK == Net!TypeOK
 
 ====
