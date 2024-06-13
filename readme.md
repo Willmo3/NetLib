@@ -20,7 +20,7 @@ NetLib encapsulates common network environmental assumptions in a modular and re
 
 ## Usage
 
-Because TLA+ is not a standard programming language, models cannot simply be imported. Instead, to use NetLib, one must define a *parallel composition* of their model with NetLib. For an example of this, please view our testing files.
+Because TLA+ is not a standard programming language, NetLib cannot be used via some simple import statement. Instead, one must define a *parallel composition* of their model with NetLib. For an example of this, please view our testing files.
 
 ### Required Variables
 - Delta: the maximum time bound between network communication. This is treated as a constant.
