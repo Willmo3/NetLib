@@ -8,6 +8,7 @@ Payloads == {"a", "b", "c"}
 
 VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
 vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
+
 clientVars == <<sentPayloads, rcvPayloads>>
 netVars == <<t, sentMsgs, deliveredMsgs>>
 
@@ -24,8 +25,7 @@ Client == INSTANCE NetClient WITH
 SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 
 \* NOTE: For this example, we've tied Client!RcvMsg to Net!DeliverMsg. This substantially reduces the state space.
-\* Notice that net allows duplicate payloads, while client will only recieve one payload!
-\* This is because this is an example client.
+\* Notice that net allows duplicate payloads, while this example client will only recieve one payload!
 DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
 IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
