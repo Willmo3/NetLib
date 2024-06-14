@@ -9,6 +9,7 @@ Payloads == {"a", "b", "c"}
 VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
 vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
 clientVars == <<sentPayloads, rcvPayloads>>
+netVars == <<t, sentMsgs, deliveredMsgs>>
 
 Net == INSTANCE SynchLib WITH 
     t <- t,
@@ -20,11 +21,13 @@ Client == INSTANCE NetClient WITH
     rcvPayloads <- rcvPayloads
 
 \* COMPOSED OPERATIONS
-SndMsg(payload) == Net!SndMsg(payload) /\ Client!SndMsg(payload)
+SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 
-DeliverMsg(msg) == Net!DeliverMsg(msg) /\ Client!DeliverMsg(msg)
+DeliverMsg(msg) == UNCHANGED <<clientVars>> /\ Net!DeliverMsg(msg)
 
-IncTime == Net!IncTime /\ UNCHANGED <<clientVars>>
+RcvMsg(payload) == Client!RcvMsg(payload) /\ UNCHANGED <<netVars>>
+
+IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
 \* Imported safety properties
 
@@ -39,10 +42,10 @@ Init == Net!Init /\ Client!Init
 Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
+    \/ \E msg \in deliveredMsgs: RcvMsg(msg.payload)
     \/ IncTime
-
+    
 Spec == Init /\ [][Next]_vars
-
 \* In order to guarantee message arrival, need to allow fairness.
 \* Given that this is a synchronous network, some guarantee of fairness is natural anyways.
 FairSpec == Spec /\ WF_vars(Next)

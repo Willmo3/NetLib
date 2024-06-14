@@ -9,6 +9,7 @@ Payloads == {"a", "b", "c"}
 VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
 vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
 clientVars == <<sentPayloads, rcvPayloads>>
+netVars == <<t, sentMsgs, deliveredMsgs>>
 
 Net == INSTANCE SynchLib WITH 
     t <- t,
@@ -22,7 +23,9 @@ Client == INSTANCE NetClient WITH
 \* COMPOSED OPERATIONS
 SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 
-DeliverMsg(msg) == Client!DeliverMsg(msg) /\ Net!DeliverMsg(msg)
+DeliverMsg(msg) == UNCHANGED <<clientVars>> /\ Net!DeliverMsg(msg)
+
+RcvMsg(payload) == Client!RcvMsg(payload) /\ UNCHANGED <<netVars>>
 
 \* Checking that t < delta to limit state space and prevent a ton of extra time steps.
 IncTime == UNCHANGED <<clientVars>> /\ t < Net!Delta /\ Net!IncTime
@@ -40,6 +43,7 @@ Init == Net!Init /\ Client!Init
 Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
+    \/ \E msg \in deliveredMsgs: RcvMsg(msg.payload)
     \/ IncTime
     
 Spec == Init /\ [][Next]_vars
