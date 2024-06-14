@@ -6,16 +6,10 @@ EXTENDS TLC, Integers, Sequences
 
 Payloads == {"a", "b", "c"}
 
-\* Delta: maximum sync time bound.
 VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
 vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
-
-\* TODO: don't reference shared variables
-
-\* Variables local to network abstraction.
 clientVars == <<sentPayloads, rcvPayloads>>
 
-\* Change Delta to constant.
 Net == INSTANCE SynchLib WITH 
     t <- t,
     sentMsgs <- sentMsgs,
@@ -32,6 +26,13 @@ DeliverMsg(msg) == Net!DeliverMsg(msg) /\ Client!DeliverMsg(msg)
 
 IncTime == Net!IncTime /\ UNCHANGED <<clientVars>>
 
+\* Imported safety properties
+
+AllRcvedInTime == Net!AllRcvedInTime 
+AllRcvedSent == Net!AllRcvedSent
+TypeOK == Net!TypeOK
+AllEventuallyRcved == Client!AllEventuallyRcved
+
 \* SPECIFICATION
 Init == Net!Init /\ Client!Init
 
@@ -39,13 +40,10 @@ Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
     \/ IncTime
-    
+
 Spec == Init /\ [][Next]_vars
 
-\* Imported safety properties
-
-AllRcvedInTime == Net!AllRcvedInTime 
-AllRcvedSent == Net!AllRcvedSent
-TypeOK == Net!TypeOK
+\* We delegate a lot to the network
+FairSpec == Spec /\ WF_vars(Next)
 
 ====

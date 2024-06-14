@@ -20,4 +20,6 @@ Init ==
     /\ sentPayloads = {}
     /\ rcvPayloads = {}
 
+AllEventuallyRcved == <>(rcvPayloads = Payloads)
+
 ====

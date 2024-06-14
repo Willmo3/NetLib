@@ -6,16 +6,10 @@ EXTENDS TLC, Integers, Sequences
 
 Payloads == {"a", "b", "c"}
 
-\* Delta: maximum sync time bound.
 VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
 vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
-
-\* TODO: don't reference shared variables
-
-\* Variables local to network abstraction.
 clientVars == <<sentPayloads, rcvPayloads>>
 
-\* Change Delta to constant.
 Net == INSTANCE SynchLib WITH 
     t <- t,
     sentMsgs <- sentMsgs,
@@ -26,12 +20,19 @@ Client == INSTANCE SynchClient WITH
     rcvPayloads <- rcvPayloads
 
 \* COMPOSED OPERATIONS
-SndMsg(payload) == Net!SndMsg(payload) /\ Client!SndMsg(payload)
+SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 
-DeliverMsg(msg) == Net!DeliverMsg(msg) /\ Client!DeliverMsg(msg)
+DeliverMsg(msg) == Client!DeliverMsg(msg) /\ Net!DeliverMsg(msg)
 
 \* Checking that t < delta to limit state space and prevent a ton of extra time steps.
-IncTime == t < Net!Delta /\ Net!IncTime /\ UNCHANGED <<clientVars>>
+IncTime == UNCHANGED <<clientVars>> /\ t < Net!Delta /\ Net!IncTime
+
+\* Imported safety properties
+
+AllRcvedInTime == Net!AllRcvedInTime 
+AllRcvedSent == Net!AllRcvedSent
+TypeOK == Net!TypeOK
+AllEventuallyRcved == Client!AllEventuallyRcved
 
 \* SPECIFICATION
 Init == Net!Init /\ Client!Init
@@ -42,11 +43,7 @@ Next ==
     \/ IncTime
     
 Spec == Init /\ [][Next]_vars
-
-\* Imported safety properties
-
-AllRcvedInTime == Net!AllRcvedInTime 
-AllRcvedSent == Net!AllRcvedSent
-TypeOK == Net!TypeOK
+\* We delegate a lot to the network
+FairSpec == Spec /\ WF_vars(Next)
 
 ====
