@@ -4,7 +4,7 @@ EXTENDS TLC, Integers, Sequences
 \* This tests the sychronous lib with a litany of messages.
 \* Parallel composition of this testing with SynchLib.
 
-Payloads == {1, 2, 3}
+Payloads == {"a", "b", "c"}
 
 \* TODO: eventually cond?
 

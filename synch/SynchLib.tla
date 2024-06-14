@@ -35,14 +35,13 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 \* All messages must have a time.
 \* The time must be greater than or equal to 0
 
-\* TODO: Delta should be >= 2? Need some time to send, recv
-\* TODO: these are not type invariants -- look into splitting / changing
-\* TODO: pick a type for oaykiad
+Message == [time : Nat, payload: STRING]
+
 TypeOK ==
     /\ Delta \in Nat
     /\ t \in Nat
-    /\ \A msg \in sentMsgs : msg.time \in Nat
-    /\ \A msg \in deliveredMsgs : msg.time \in Nat
+    /\ \A msg \in sentMsgs : msg \in Message
+    /\ \A msg \in deliveredMsgs : msg \in Message
 
 
 \* ----- HELPER PREDICATES -----
