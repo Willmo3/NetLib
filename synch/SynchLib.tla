@@ -54,7 +54,6 @@ TypeOK ==
 \* -- Is about to expire its max delivery time
 \* -- Hasn't yet been delivered
 
-\* TODO: look into not in operator
 UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin deliveredMsgs)
 
 
