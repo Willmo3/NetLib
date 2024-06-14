@@ -39,10 +39,10 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 \* TODO: these are not type invariants -- look into splitting / changing
 \* TODO: pick a type for oaykiad
 TypeOK ==
-    /\ Delta > 0
-    /\ t >= 0
-    /\ \A msg \in sentMsgs : (msg.time >= 0)
-    /\ \A msg \in deliveredMsgs : (msg.time >= 0)
+    /\ Delta \in Nat
+    /\ t \in Nat
+    /\ \A msg \in sentMsgs : msg.time \in Nat
+    /\ \A msg \in deliveredMsgs : msg.time \in Nat
 
 
 \* ----- HELPER PREDICATES -----
