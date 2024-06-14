@@ -1,7 +1,6 @@
----- MODULE SynchClient ----
+---- MODULE NetClient ----
 EXTENDS TLC
 
-\* TODO: eventually cond?
 Payloads == {"a", "b", "c"}
 
 VARIABLES sentPayloads, rcvPayloads

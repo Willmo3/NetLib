@@ -15,7 +15,7 @@ Net == INSTANCE SynchLib WITH
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
 
-Client == INSTANCE SynchClient WITH 
+Client == INSTANCE NetClient WITH 
     sentPayloads <- sentPayloads,
     rcvPayloads <- rcvPayloads
 
