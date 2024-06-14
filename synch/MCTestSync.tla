@@ -6,8 +6,6 @@ EXTENDS TLC, Integers, Sequences
 
 Payloads == {"a", "b", "c"}
 
-\* TODO: eventually cond?
-
 \* Delta: maximum sync time bound.
 VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
 vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
@@ -15,7 +13,7 @@ vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
 \* TODO: don't reference shared variables
 
 \* Variables local to network abstraction.
-localVars == <<sentPayloads, rcvPayloads>>
+clientVars == <<sentPayloads, rcvPayloads>>
 
 \* Change Delta to constant.
 Net == INSTANCE SynchLib WITH 
@@ -23,28 +21,20 @@ Net == INSTANCE SynchLib WITH
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
 
+Client == INSTANCE SynchClient WITH 
+    sentPayloads <- sentPayloads,
+    rcvPayloads <- rcvPayloads
+
 \* COMPOSED OPERATIONS
-SndMsg(payload) ==
-    /\ payload \notin sentPayloads
-    /\ Net!SndMsg(payload)
-    /\ sentPayloads' = sentPayloads \cup {payload}
-    /\ UNCHANGED <<rcvPayloads, deliveredMsgs>>
+SndMsg(payload) == Net!SndMsg(payload) /\ Client!SndMsg(payload)
 
-DeliverMsg(msg) ==
-    /\ Net!DeliverMsg(msg)
-    /\ rcvPayloads' = rcvPayloads \cup {msg.payload}
-    /\ UNCHANGED <<sentPayloads>>
+DeliverMsg(msg) == Net!DeliverMsg(msg) /\ Client!DeliverMsg(msg)
 
-IncTime ==
-    /\ t < Net!Delta
-    /\ Net!IncTime
-    /\ UNCHANGED <<localVars>>
+\* Checking that t < delta to limit state space and prevent a ton of extra time steps.
+IncTime == t < Net!Delta /\ Net!IncTime /\ UNCHANGED <<clientVars>>
 
 \* SPECIFICATION
-Init ==
-    /\ sentPayloads = {}
-    /\ rcvPayloads = {}
-    /\ Net!Init
+Init == Net!Init /\ Client!Init
 
 Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
