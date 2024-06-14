@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+cd synch
+ln -s ../client/NetClient.tla .
