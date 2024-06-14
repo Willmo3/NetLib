@@ -85,8 +85,6 @@ IncTime ==
 
 \* ----- MODEL RUNNERS -----
 
-\* NOTE: change msgs to change what's inside!
-\* Delta not initialized -- must be substituted in!
 Init == 
     /\ t = 0
     /\ sentMsgs = {}
