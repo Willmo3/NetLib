@@ -4,13 +4,14 @@ EXTENDS TLC, Integers, Sequences
 
 \* ----- VARIABLES -----
 
-\* delta: upper bound on time. MUST be substituted in!
+Delta == 16
+
 \* t: current logical time
 \* sentMsgs: set of all messages explicitly sent by our system
 \* deliveredMsgs: set of all messages delivered by our system
-VARIABLES Delta, t, sentMsgs, deliveredMsgs
+VARIABLES t, sentMsgs, deliveredMsgs
 
-vars == <<Delta, t, sentMsgs, deliveredMsgs>>
+vars == <<t, sentMsgs, deliveredMsgs>>
 
 \* ----- SAFETY PROPERTIES -----
 
@@ -38,7 +39,6 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 Message == [time : Nat, payload: STRING]
 
 TypeOK ==
-    /\ Delta \in Nat
     /\ t \in Nat
     /\ \A msg \in sentMsgs : msg \in Message
     /\ \A msg \in deliveredMsgs : msg \in Message
@@ -64,7 +64,7 @@ SndMsg(payload) ==
     /\ ~UrgentMsg
     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
     /\ t' = t + 1
-    /\ UNCHANGED<<Delta, deliveredMsgs>>
+    /\ UNCHANGED<<deliveredMsgs>>
 
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
@@ -74,13 +74,13 @@ DeliverMsg(msg) ==
     /\ msg \notin deliveredMsgs
     /\ deliveredMsgs' = deliveredMsgs \cup {msg}
     /\ t' = t + 1
-    /\ UNCHANGED<<Delta, sentMsgs>>
+    /\ UNCHANGED<<sentMsgs>>
 
 \* To represent network delays, the network time can be incremented randomly at any point.
 IncTime ==
     /\ ~UrgentMsg
     /\ t' = t + 1
-    /\ UNCHANGED<<Delta,sentMsgs, deliveredMsgs>>
+    /\ UNCHANGED<<sentMsgs, deliveredMsgs>>
 
 
 \* ----- MODEL RUNNERS -----

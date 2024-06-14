@@ -9,8 +9,8 @@ Payloads == {"a", "b", "c"}
 \* TODO: eventually cond?
 
 \* Delta: maximum sync time bound.
-VARIABLES Delta, t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
-vars == <<Delta, t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
+VARIABLES t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
+vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
 
 \* TODO: don't reference shared variables
 
@@ -19,7 +19,6 @@ localVars == <<sentPayloads, rcvPayloads>>
 
 \* Change Delta to constant.
 Net == INSTANCE SynchLib WITH 
-    Delta <- Delta,
     t <- t,
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
@@ -29,22 +28,21 @@ SndMsg(payload) ==
     /\ payload \notin sentPayloads
     /\ Net!SndMsg(payload)
     /\ sentPayloads' = sentPayloads \cup {payload}
-    /\ UNCHANGED <<Delta, rcvPayloads, deliveredMsgs>>
+    /\ UNCHANGED <<rcvPayloads, deliveredMsgs>>
 
 DeliverMsg(msg) ==
     /\ Net!DeliverMsg(msg)
     /\ rcvPayloads' = rcvPayloads \cup {msg.payload}
-    /\ UNCHANGED <<Delta, sentPayloads>>
+    /\ UNCHANGED <<sentPayloads>>
 
 IncTime ==
     /\ Net!IncTime
-    /\ UNCHANGED <<Delta, localVars>>
+    /\ UNCHANGED <<localVars>>
 
 \* SPECIFICATION
 Init ==
     /\ sentPayloads = {}
     /\ rcvPayloads = {}
-    /\ Delta = 16
     /\ Net!Init
 
 Next ==
