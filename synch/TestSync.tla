@@ -43,7 +43,8 @@ Next ==
 
 Spec == Init /\ [][Next]_vars
 
-\* We delegate a lot to the network
+\* In order to guarantee message arrival, need to allow fairness.
+\* Given that this is a synchronous network, some guarantee of fairness is natural anyways.
 FairSpec == Spec /\ WF_vars(Next)
 
 ====
