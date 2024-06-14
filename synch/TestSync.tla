@@ -23,9 +23,10 @@ Client == INSTANCE NetClient WITH
 \* COMPOSED OPERATIONS
 SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 
-DeliverMsg(msg) == UNCHANGED <<clientVars>> /\ Net!DeliverMsg(msg)
-
-RcvMsg(payload) == Client!RcvMsg(payload) /\ UNCHANGED <<netVars>>
+\* NOTE: For this example, we've tied Client!RcvMsg to Net!DeliverMsg. This substantially reduces the state space.
+\* Notice that net allows duplicate payloads, while client will only recieve one payload!
+\* This is because this is an example client.
+DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
 IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
@@ -42,7 +43,6 @@ Init == Net!Init /\ Client!Init
 Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
-    \/ \E msg \in deliveredMsgs: RcvMsg(msg.payload)
     \/ IncTime
     
 Spec == Init /\ [][Next]_vars
