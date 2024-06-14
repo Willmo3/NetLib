@@ -9,8 +9,8 @@ Payloads == {1, 2, 3}
 \* TODO: eventually cond?
 
 \* Delta: maximum sync time bound.
-VARIABLES Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads
-vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue, sentPayloads, rcvPayloads>>
+VARIABLES Delta, t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads
+vars == <<Delta, t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
 
 \* TODO: don't reference shared variables
 
@@ -22,25 +22,19 @@ Net == INSTANCE SynchLib WITH
     Delta <- Delta,
     t <- t,
     sentMsgs <- sentMsgs,
-    deliveredMsgs <- deliveredMsgs,
-    rcvQueue <- rcvQueue
+    deliveredMsgs <- deliveredMsgs
 
 \* COMPOSED OPERATIONS
 SndMsg(payload) ==
     /\ payload \notin sentPayloads
     /\ Net!SndMsg(payload)
     /\ sentPayloads' = sentPayloads \cup {payload}
-    /\ UNCHANGED <<Delta, rcvPayloads, rcvQueue, deliveredMsgs>>
+    /\ UNCHANGED <<Delta, rcvPayloads, deliveredMsgs>>
 
-RcvMsg ==
-    /\ Len(rcvQueue) > 0
-    /\ rcvPayloads' = rcvPayloads \cup {Head(rcvQueue)}
-    /\ rcvQueue' = Tail(rcvQueue)
-    /\ UNCHANGED <<Delta, t, sentMsgs, deliveredMsgs, sentPayloads>>
-
-DeliverMsg ==
-    /\ Net!DeliverMsg
-    /\ UNCHANGED <<Delta, localVars>>
+DeliverMsg(msg) ==
+    /\ Net!DeliverMsg(msg)
+    /\ rcvPayloads' = rcvPayloads \cup {msg.payload}
+    /\ UNCHANGED <<Delta, sentPayloads>>
 
 IncTime ==
     /\ Net!IncTime
@@ -55,8 +49,7 @@ Init ==
 
 Next ==
     \/ \E payload \in Payloads: SndMsg(payload)
-    \/ DeliverMsg
-    \/ RcvMsg
+    \/ \E msg \in sentMsgs: DeliverMsg(msg)
     \/ IncTime
     
 Spec == Init /\ [][Next]_vars

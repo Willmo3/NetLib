@@ -8,10 +8,9 @@ EXTENDS TLC, Integers, Sequences
 \* t: current logical time
 \* sentMsgs: set of all messages explicitly sent by our system
 \* deliveredMsgs: set of all messages delivered by our system
-\* rcvQueue: queue of messages to be recieved.
-VARIABLES Delta, t, sentMsgs, deliveredMsgs, rcvQueue
+VARIABLES Delta, t, sentMsgs, deliveredMsgs
 
-vars == <<Delta, t, sentMsgs, deliveredMsgs, rcvQueue>>
+vars == <<Delta, t, sentMsgs, deliveredMsgs>>
 
 \* ----- SAFETY PROPERTIES -----
 
@@ -44,7 +43,6 @@ TypeOK ==
     /\ t >= 0
     /\ \A msg \in sentMsgs : (msg.time >= 0)
     /\ \A msg \in deliveredMsgs : (msg.time >= 0)
-    /\ Len(rcvQueue) = 0 \/ (\E msg \in deliveredMsgs: msg.payload = Head(rcvQueue))
 
 
 \* ----- HELPER PREDICATES -----
@@ -67,25 +65,23 @@ SndMsg(payload) ==
     /\ ~UrgentMsg
     /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> payload]}
     /\ t' = t + 1
-    /\ UNCHANGED<<Delta, deliveredMsgs, rcvQueue>>
+    /\ UNCHANGED<<Delta, deliveredMsgs>>
 
 \* A message that has been sent but not delivered may be delivered at any point.
 \* Only deliver a message if there isn't another one that needs to be delivered right now!
 \* (Or if this is the message that needs to be delivered right now!)
-DeliverMsg ==
-    /\ \E msg \in sentMsgs: (
-        /\ UrgentMsg => msg.time + Delta = t
-        /\ msg \notin deliveredMsgs
-        /\ deliveredMsgs' = deliveredMsgs \cup {msg}
-        /\ rcvQueue' = Append(rcvQueue, msg.payload)
-        /\ t' = t + 1)
+DeliverMsg(msg) ==
+    /\ UrgentMsg => msg.time + Delta = t
+    /\ msg \notin deliveredMsgs
+    /\ deliveredMsgs' = deliveredMsgs \cup {msg}
+    /\ t' = t + 1
     /\ UNCHANGED<<Delta, sentMsgs>>
 
 \* To represent network delays, the network time can be incremented randomly at any point.
 IncTime ==
     /\ ~UrgentMsg
     /\ t' = t + 1
-    /\ UNCHANGED<<Delta,sentMsgs, deliveredMsgs, rcvQueue>>
+    /\ UNCHANGED<<Delta,sentMsgs, deliveredMsgs>>
 
 
 \* ----- MODEL RUNNERS -----
@@ -96,7 +92,6 @@ Init ==
     /\ t = 0
     /\ sentMsgs = {}
     /\ deliveredMsgs = {}
-    /\ rcvQueue = <<>>
 
 \* TODO: By convention, include next
 
