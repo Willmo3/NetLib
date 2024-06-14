@@ -2,6 +2,12 @@
 
 A TLA+ library for network communication!
 
+## SETUP:
+
+Run ./setup to set up the necessary symlinks for dependencies!
+
+This is necessary because TLA+ requires module imports be in the same directory and I'm tired of copying files back and forth.
+
 ## Introduction
 
 As TLA+ model decomposition tools such as CMU SoDA's Recomp-Verify (https://github.com/cmu-soda/recomp-verify) emerge,
@@ -39,7 +45,9 @@ In this way, our library conforms to the formal definition of synchronicity.
 
 ## Usage
 
-Because TLA+ is not a standard programming language, NetLib cannot be used via some simple import statement. Instead, one must define a *parallel composition* of their model with NetLib. For an example of this, please view our testing files.
+Because TLA+ is not a standard programming language, NetLib cannot be used via some simple import statement. Instead, one must define a *parallel composition* of their model with NetLib.
+
+In TestSync.tla, we compose SynchLib with our defined SynchClient
 
 ### Required Variables
 - Delta: the maximum time bound between network communication. This is treated as a constant.
