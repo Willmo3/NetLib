@@ -1,4 +1,4 @@
----- MODULE TestSync ----
+---- MODULE MCTestNet ----
 EXTENDS TLC, Integers, Sequences
 
 \* This tests the sychronous lib with a litany of messages.
@@ -12,7 +12,7 @@ vars == <<t, sentMsgs, deliveredMsgs, sentPayloads, rcvPayloads>>
 clientVars == <<sentPayloads, rcvPayloads>>
 netVars == <<t, sentMsgs, deliveredMsgs>>
 
-Net == INSTANCE SynchLib WITH 
+Net == INSTANCE NetLib WITH 
     t <- t,
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
@@ -28,7 +28,8 @@ SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 \* Notice that net allows duplicate payloads, while this example client will only recieve one payload!
 DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
-IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
+\* Checking that t < delta to limit state space and prevent a ton of extra time steps.
+IncTime == UNCHANGED <<clientVars>> /\ t < Net!Delta /\ Net!IncTime
 
 \* Imported safety properties
 

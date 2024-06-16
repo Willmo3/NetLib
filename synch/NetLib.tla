@@ -1,10 +1,24 @@
----- MODULE SynchLib ----
+---- MODULE NetLib ----
 EXTENDS TLC, Integers, Sequences
 
 
-\* ----- VARIABLES -----
+\* Partially synchronous -- what to do?
+\* Define some GST and some DELTA
+\* Partially Asynchronous safe. safe: For all messages M, if m.time > GST, then t < m.time + DELTA
 
+\* CONSTANTS
+
+
+\* What type of network is this?
+\* OPTIONS: "sync", "async", "partial"
+NetType == "sync"
+
+\* The upper bound on logical communication time.
+\* This does not apply to asynchronous networks.
 Delta == 16
+
+
+\* ----- VARIABLES -----
 
 \* t: current logical time
 \* sentMsgs: set of all messages explicitly sent by our system
@@ -16,18 +30,20 @@ vars == <<t, sentMsgs, deliveredMsgs>>
 \* ----- SAFETY PROPERTIES -----
 
 \* Synchronous network communication includes an upper bound on message delivery time.
-\* Hence, it can be represented by the following two safety properties:
+\* Hence, it can be represented by the following safety property:
 
 \* For all sent messages,
-\* If at any point, that message is not in the set of recieved messages
-\* And more than \delta time has passed since it was recieved
-\* Then a safety property is violated!
+\* Either it must have already been delivered
+\* Or less than \delta time has passed since it was recieved
+
+\* By definition, this property does not hold for asynchronous networks.
 AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
 \* For all recieved messages,
 \* If that message was never sent
 \* Then a safety property is violated!
 AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+
 
 
 \* ----- TYPE PROPERTY -----
@@ -47,11 +63,12 @@ TypeOK ==
 \* ----- HELPER PREDICATES -----
 
 \* Is there a message that urgently needs to be delivered?
+\* First off: are we in a synchronous network? If not, we get there when we get there.
 \* This is true if there's a message which:
 \* -- Is about to expire its max delivery time
 \* -- Hasn't yet been delivered
 
-UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin deliveredMsgs)
+UrgentMsg == NetType = "sync" /\ \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin deliveredMsgs)
 
 
 \* ----- STATES -----
