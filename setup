@@ -2,4 +2,4 @@
 
 cd "test"
 ln -s ../client/NetClient.tla
-ln -s ../env/NetLib.tla
+ln -s ../lib/NetLib.tla
