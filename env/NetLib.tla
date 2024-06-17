@@ -11,7 +11,7 @@ EXTENDS TLC, Integers, Sequences
 
 \* What type of network is this?
 \* OPTIONS: "sync", "async", "partial"
-NetType == "sync"
+NetType == "async"
 
 \* The upper bound on logical communication time.
 \* This does not apply to asynchronous networks.
@@ -55,6 +55,7 @@ AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 Message == [time : Nat, payload: STRING]
 
 TypeOK ==
+    /\ NetType \in {"sync", "async", "partial"}
     /\ t \in Nat
     /\ \A msg \in sentMsgs : msg \in Message
     /\ \A msg \in deliveredMsgs : msg \in Message
