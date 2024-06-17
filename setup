@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
-cd env
-ln -s ../client/NetClient.tla .
+cd "test"
+ln -s ../client/NetClient.tla
+ln -s ../env/NetLib.tla

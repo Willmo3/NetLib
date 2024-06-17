@@ -1,3 +1,4 @@
 states
 *out
-synch/NetClient.tla
+test/NetClient.tla
+test/NetLib.tla
