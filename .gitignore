@@ -1,3 +1,3 @@
 states
-*.out
+*out
 synch/NetClient.tla
