@@ -2,10 +2,6 @@
 EXTENDS TLC, Integers, Sequences
 
 
-\* Partially synchronous -- what to do?
-\* Define some GST and some DELTA
-\* Partially Asynchronous safe. safe: For all messages M, if m.time > GST, then t < m.time + DELTA
-
 \* CONSTANTS
 
 
@@ -30,6 +26,7 @@ GST == 16
 VARIABLES t, sentMsgs, deliveredMsgs
 
 vars == <<t, sentMsgs, deliveredMsgs>>
+
 
 \* ----- SAFETY PROPERTIES -----
 
@@ -121,6 +118,13 @@ Init ==
     /\ sentMsgs = {}
     /\ deliveredMsgs = {}
 
-\* TODO: By convention, include next
+\* This next will continue endlessly delivering empty messages.
+\* NetLib is meant to be composed with another library.
+Next ==
+    \/ SndMsg("")
+    \/ \E msg \in sentMsgs: DeliverMsg(msg)
+    \/ IncTime
+
+Spec == Init /\ [][Next]_vars
 
 ====
