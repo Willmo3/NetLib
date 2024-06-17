@@ -11,11 +11,15 @@ EXTENDS TLC, Integers, Sequences
 
 \* What type of network is this?
 \* OPTIONS: "sync", "async", "partial"
-NetType == "async"
+NetType == "sync"
 
 \* The upper bound on logical communication time.
 \* This does not apply to asynchronous networks.
-Delta == 16
+Delta == 8
+
+\* Network Global Stabilization Time
+\* Applies only for partially synchronous networks
+GST == 16
 
 
 \* ----- VARIABLES -----
@@ -39,11 +43,17 @@ vars == <<t, sentMsgs, deliveredMsgs>>
 \* By definition, this property does not hold for asynchronous networks.
 AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
+\* A variant of all recieved in time.
+\* If a message was sent after the GST, then it should respect delta.
+AllRcvedInTimeAfterGST == \A msg \in sentMsgs : (
+    \/ msg.time < GST 
+    \/ msg \in deliveredMsgs 
+    \/ t <= msg.time + Delta)
+
 \* For all recieved messages,
 \* If that message was never sent
 \* Then a safety property is violated!
 AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
-
 
 
 \* ----- TYPE PROPERTY -----
@@ -64,12 +74,15 @@ TypeOK ==
 \* ----- HELPER PREDICATES -----
 
 \* Is there a message that urgently needs to be delivered?
-\* First off: are we in a synchronous network? If not, we get there when we get there.
+\* First off: is our network currently synchronous (GST passed or always sync?)
+\* If not, no guarantees about message urgency
 \* This is true if there's a message which:
 \* -- Is about to expire its max delivery time
 \* -- Hasn't yet been delivered
 
-UrgentMsg == NetType = "sync" /\ \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin deliveredMsgs)
+UrgentMsg == 
+    /\ (NetType = "sync" \/ (NetType = "partial" /\ t >= GST))
+    /\ \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin deliveredMsgs)
 
 
 \* ----- STATES -----

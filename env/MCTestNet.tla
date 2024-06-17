@@ -28,12 +28,13 @@ SndMsg(payload) == Client!SndMsg(payload) /\ Net!SndMsg(payload)
 \* Notice that net allows duplicate payloads, while this example client will only recieve one payload!
 DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
-\* Checking that t < delta to limit state space and prevent a ton of extra time steps.
-IncTime == UNCHANGED <<clientVars>> /\ t < Net!Delta /\ Net!IncTime
+\* Checking that t < GST + Delta to limit state space and prevent a ton of extra time steps.
+IncTime == UNCHANGED <<clientVars>> /\ t < Net!GST + Net!Delta /\ Net!IncTime
 
 \* Imported safety properties
 
-AllRcvedInTime == Net!AllRcvedInTime 
+AllRcvedInTime == Net!AllRcvedInTime
+AllRcvedInTimeAfterGST == Net!AllRcvedInTimeAfterGST
 AllRcvedSent == Net!AllRcvedSent
 TypeOK == Net!TypeOK
 AllEventuallyRcved == Client!AllEventuallyRcved
