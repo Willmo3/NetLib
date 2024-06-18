@@ -25,6 +25,8 @@ Channel == INSTANCE NetLib WITH
 \* No message should be recieved if it was not first sent.
 AllRcvedSent == Channel!AllRcvedSent
 
+TypeOK == Channel!TypeOK
+
 \* TODO: add all eventually recieved
 
 

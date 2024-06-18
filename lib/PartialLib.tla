@@ -54,6 +54,8 @@ AllRcvedInTimeAfterGST == \A msg \in sentMsgs:
     \/ msg \in deliveredMsgs 
     \/ t <= msg.time + Delta
 
+    TypeOK == Channel!TypeOK
+
 
 \* ----- STATES -----
 

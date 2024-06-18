@@ -41,6 +41,8 @@ AllRcvedSent == Channel!AllRcvedSent
 \* All messages must be recieved by delta time.
 AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
+TypeOK == Channel!TypeOK
+
 
 \* ----- STATES -----
 SndMsg(payload) ==
