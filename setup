@@ -1,8 +1,21 @@
 #!/usr/bin/env sh
 
 cd "test"
-ln -s ../client/NetClient.tla
-ln -s ../lib/NetLib.tla
-ln -s ../lib/SynchLib.tla
-ln -s ../lib/AsynchLib.tla
-ln -s ../lib/PartialLib.tla
+
+cd "synch"
+ln -s ../../client/NetClient.tla
+ln -s ../../lib/NetLib.tla
+ln -s ../../lib/SynchLib.tla
+cd ".."
+
+cd "asynch"
+ln -s ../../client/NetClient.tla
+ln -s ../../lib/NetLib.tla
+ln -s ../../lib/AsynchLib.tla
+cd ".."
+
+cd "partial"
+ln -s ../../client/NetClient.tla
+ln -s ../../lib/NetLib.tla
+ln -s ../../lib/PartialLib.tla
+cd ".."
