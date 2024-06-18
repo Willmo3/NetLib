@@ -62,7 +62,10 @@ Init == Channel!Init
 
 \* This next will continue endlessly delivering empty messages.
 \* NetLib is meant to be composed with another library.
-Next == Channel!Next
+Next == 
+    \/ SndMsg("")
+    \/ \E msg \in sentMsgs: DeliverMsg(msg)
+    \/ IncTime
 
 Spec == Init /\ [][Next]_vars
 
