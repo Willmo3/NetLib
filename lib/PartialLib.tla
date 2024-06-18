@@ -2,8 +2,6 @@
 EXTENDS TLC, Integers
 
 \* The upper bound on logical communication time.
-\* This does not apply to asynchronous networks.
-
 \* In a partially synchronous network, this delta is hidden -- i.e. unknown
 \* This is equivalent to the GST definition of asynchronous networks.
 HiddenDelta == 16
@@ -28,10 +26,9 @@ Channel == INSTANCE NetLib WITH
 
 \* ----- HELPER PREDICATES -----
 
-\* Assuming we've reached GST:
 \* Is there a message which:
-\* -- Was sent after GST
-\* -- Needs to be sent now or will expire delta!
+\* -- Hasn't yet been delivered
+\* -- Needs to be sent now or will expire the hidden delta!
 UrgentMsg == \E msg \in sentMsgs : 
     /\ msg \notin deliveredMsgs
     /\ msg.time + HiddenDelta = t
@@ -42,8 +39,8 @@ UrgentMsg == \E msg \in sentMsgs :
 \* No message should be recieved if it was not first sent.
 AllRcvedSent == Channel!AllRcvedSent
 
-\* A variant of all recieved in time.
-\* If a message was sent after the GST, then it should respect delta.
+\* Since the hidden delta includes the GST in it
+\* Simply changing AllRcvedInTime to use HiddenDelta indicates it's recieved after GST
 AllRcvedInTimeAfterGST == \A msg \in sentMsgs:
     \/ msg \in deliveredMsgs 
     \/ t <= msg.time + HiddenDelta
@@ -53,11 +50,6 @@ TypeOK == Channel!TypeOK
 
 \* ----- STATES -----
 
-\* Sending a message in a partially synchronous network is different
-\* We assume that all messages are sent at different logical times.
-\* But with the GST -- all messages are sent at one logical time!!!
-\* Solution: for all messages sent before GST
-\* 
 SndMsg(payload) ==
     /\ ~UrgentMsg
     /\ Channel!SndMsg(payload)
