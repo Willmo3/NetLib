@@ -1,7 +1,7 @@
 ---- MODULE MCTestSynch ----
 EXTENDS TLC, Integers, Sequences
 
-\* This tests the sychronous lib with a litany of messages.
+\* This tests the synchronous lib with a litany of messages.
 \* Parallel composition of this testing with SynchLib.
 
 Payloads == {"a", "b", "c"}
