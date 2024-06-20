@@ -19,7 +19,7 @@ vars == <<t, sentMsgs, deliveredMsgs>>
 
 \* ----- IMPORTS -----
 
-Channel == INSTANCE NetLib WITH
+Channel == INSTANCE NetChannel WITH
     t <- t,
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs

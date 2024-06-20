@@ -1,7 +1,7 @@
 states
 *out
 test/*/NetClient.tla
-test/*/NetLib.tla
+test/*/NetChannel.tla
 test/*/SynchLib.tla
 test/*/AsynchLib.tla
 test/*/PartialLib.tla

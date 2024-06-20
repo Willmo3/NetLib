@@ -14,7 +14,7 @@ vars == <<t, sentMsgs, deliveredMsgs>>
 
 \* ----- IMPORTS -----
 
-Channel == INSTANCE NetLib WITH
+Channel == INSTANCE NetChannel WITH
     t <- t,
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
@@ -22,7 +22,6 @@ Channel == INSTANCE NetLib WITH
 
 \* ----- SAFETY PROPERTIES -----
 
-\* No message should be recieved if it was not first sent.
 AllRcvedSent == Channel!AllRcvedSent
 
 AllEventuallyDelivered == Channel!AllEventuallyDelivered

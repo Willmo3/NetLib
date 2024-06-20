@@ -1,4 +1,4 @@
----- MODULE NetLib ----
+---- MODULE NetChannel ----
 EXTENDS TLC, Integers
 
 \* ----- VARIABLES -----
