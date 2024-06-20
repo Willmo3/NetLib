@@ -35,8 +35,9 @@ UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin delivered
 
 \* ----- SAFETY PROPERTIES -----
 
-\* No message should be recieved if it was not first sent.
 AllRcvedSent == Channel!AllRcvedSent
+
+AllEventuallyDelivered == Channel!AllEventuallyDelivered
 
 \* All messages must be recieved by delta time.
 AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
