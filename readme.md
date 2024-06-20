@@ -26,10 +26,23 @@ We use one uniform logical clock to represent time elapsed during communication.
 
 For simplicity, our network is represented by a single sending agent and single receiving agent.
 
+### Project Structure:
+Our project is built with three libraries:
+
+1. SynchLib.tla, representing synchronous network communication
+2. AsynchLib.tla, representing asynchronous communication
+3. ParitalLib.tla, representing partially synchronous communication
+
+These are united by a common network channel NetChannel.tla.
+
 ### Properties:
 
 #### Recieved Messages Sent:
 In all our networks, messages that are received should have been sent by some recognized client.
+
+#### All Messages Eventually Recieved:
+Even in an asynchronous network, where messages may take an arbitrary *finite* amount of time to be delivered, messages still must be delivered.
+Therefore, it is a property of our network channel that at some point, every single message sent is delivered.
 
 #### Messages Recieved in Time
 
@@ -42,7 +55,9 @@ So, for all messages, at each time step, either that message has been delivered 
 By definition, no time bound can be placed on asynchronous message delivery time.
 
 ##### In the Partially Synchronous Context:
-In a partially synchronous network, there exists some time *GST* such that the network behaves synchronously for all messages sent after *GST*.
+In a partially synchronous network, there exists an upper bound on message delivery time, but that bound is not known. Hence, while Delta still exists in the asynchronous model, it should not be referenced outside of the asynch lib.
+
+Hence, we offer the AllRcvedInTimeAfterHiddenDelta guarantee. While this guarantee references our private delta variable, it's internal to our project. This does not take away from the fact that the actual value of the hidden delta is unknown to outside interlopers.
 
 ### Implementation
 We include random time increments to represent the varying transmission time of messages. Transitions to the time increment state are enabled whenever that increment would not cause a message to expire its delivery bound.
