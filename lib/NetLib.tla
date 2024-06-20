@@ -56,9 +56,8 @@ IncTime ==
 \* Then a safety property is violated!
 AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
 
-\* Assume this is a reliable channel: i.e. messages cannot be lost.
-AllEventuallyRecieved == <>(\A msg \in sentMsgs : msg \in deliveredMsgs)
-
+\* In our channel, every message is guaranteed to be recieved at some point.
+AllEventuallyDelivered == <>[](\A msg \in sentMsgs : msg \in deliveredMsgs)
 
 \* ----- MODEL RUNNERS -----
 

@@ -25,10 +25,9 @@ Channel == INSTANCE NetLib WITH
 \* No message should be recieved if it was not first sent.
 AllRcvedSent == Channel!AllRcvedSent
 
+AllEventuallyDelivered == Channel!AllEventuallyDelivered
+
 TypeOK == Channel!TypeOK
-
-\* TODO: add all eventually recieved
-
 
 \* ----- STATES -----
 SndMsg(payload) == Channel!SndMsg(payload)
