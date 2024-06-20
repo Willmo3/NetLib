@@ -36,7 +36,7 @@ IncTime == UNCHANGED <<clientVars>> /\ t < 16 /\ Net!IncTime
 AllRcvedInTimeAfterGST == Net!AllRcvedInTimeAfterGST
 AllRcvedSent == Net!AllRcvedSent
 TypeOK == Net!TypeOK
-AllEventuallyRcved == Client!AllEventuallyRcved
+AllEventuallyRcved == Client!AllEventuallyRcved /\ Net!AllEventuallyDelivered
 
 \* SPECIFICATION
 Init == Net!Init /\ Client!Init
