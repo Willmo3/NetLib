@@ -32,7 +32,7 @@ IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
 \* Imported safety properties
 
-AllRcvedInTimeAfterGST == Net!AllRcvedInTimeAfterGST
+AllRcvedInTimeAfterHiddenDelta == Net!AllRcvedInTimeAfterHiddenDelta
 AllRcvedSent == Net!AllRcvedSent
 TypeOK == Net!TypeOK
 AllEventuallyRcved == Client!AllEventuallyRcved /\ Net!AllEventuallyDelivered

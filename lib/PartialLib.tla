@@ -43,7 +43,7 @@ AllEventuallyDelivered == Channel!AllEventuallyDelivered
 
 \* Since the hidden delta includes the GST in it
 \* Simply changing AllRcvedInTime to use HiddenDelta indicates it's recieved after GST
-AllRcvedInTimeAfterGST == \A msg \in sentMsgs:
+AllRcvedInTimeAfterHiddenDelta == \A msg \in sentMsgs:
     \/ msg \in deliveredMsgs 
     \/ t <= msg.time + HiddenDelta
 
