@@ -37,9 +37,8 @@ UrgentMsg == \E msg \in sentMsgs : (msg.time + Delta = t /\ msg \notin delivered
 
 AllRcvedSent == Channel!AllRcvedSent
 
-AllEventuallyDelivered == Channel!AllEventuallyDelivered
-
-\* All messages must be recieved by delta time.
+\* In a synchronous library, AllEventuallyDelivered is an unnecessarily weak guarantee.
+\* Instead, all messages must be recieved by delta time.
 AllRcvedInTime == \A msg \in sentMsgs : (msg \in deliveredMsgs \/ t <= msg.time + Delta)
 
 TypeOK == Channel!TypeOK
