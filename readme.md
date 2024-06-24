@@ -41,11 +41,14 @@ These are united by a common network channel NetChannel.tla.
 #### Recieved Messages Sent:  
 In all our networks, messages that are received should have been sent by some recognized client.  
   
-#### All Messages Eventually Recieved:  
-Even in an asynchronous network, where messages may take an arbitrary *finite* amount of time to be delivered, messages still must be delivered.  
+#### All Messages Eventually Received:  
+Even in an asynchronous network, where messages may take an arbitrary *finite* amount of time to be delivered, messages still must be delivered. 
+
 Therefore, it is a property of our network channel that at some point, every single message sent is delivered.  
+
+Note that in a synchronous network, this requirement is supplanted by the more restrictive "messages received in time"
   
-#### Messages Recieved in Time  
+#### Messages Received in Time   
   
 ##### In the Synchronous Context:  
 A synchronous network is one where there exists some time bound $\Delta$ such that for any message sent at time *x*, that message is delivered by time *x* + $\Delta$.  
