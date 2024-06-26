@@ -54,7 +54,7 @@ IncTime ==
 \* For all recieved messages,
 \* If that message was never sent
 \* Then a safety property is violated!
-AllRcvedSent == \A msg \in deliveredMsgs : msg \in sentMsgs
+AllRcvedSent == deliveredMsgs \in SUBSET sentMsgs
 
 \* In our channel, every message is guaranteed to be recieved at some point.
 AllEventuallyDelivered == <>[](\A msg \in sentMsgs : msg \in deliveredMsgs)
