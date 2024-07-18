@@ -1,9 +1,6 @@
 ------------------------------- MODULE TwoClient ----------------------------- 
 EXTENDS Sequences, Naturals, Integers
 
-\* This TwoPhase is parallel composed with NetLib.
-\* Abstracting network functions
-
 VARIABLES msgs, rmState, tmState, tmPrepared
 
 vars == <<msgs, rmState, tmState, tmPrepared>>
