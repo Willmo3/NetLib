@@ -76,7 +76,6 @@ RcvMsg(payload) ==
         \/ RcvAbort(rm, payload)
 
 
-
 \***** SPECIFICATION
 
 Init ==   

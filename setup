@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+# Sanity tests
 cd "test"
 
 cd "synch"
@@ -18,4 +19,16 @@ cd "partial"
 ln -s ../../client/NetClient.tla
 ln -s ../../lib/NetChannel.tla
 ln -s ../../lib/PartialLib.tla
+cd ".."
+
+cd ".."
+
+# Library usage examples
+cd "examples"
+
+cd "twophase"
+ln -s ../lib/NetChannel.tla
+ln -s ../lib/SynchLib.tla
+cd ".."
+
 cd ".."

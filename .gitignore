@@ -1,7 +1,13 @@
 states
 *out
+
 test/*/NetClient.tla
 test/*/NetChannel.tla
 test/*/SynchLib.tla
 test/*/AsynchLib.tla
 test/*/PartialLib.tla
+
+examples/*/NetChannel.tla
+examples/*/SynchLib.tla
+examples/*/AsynchLib.tla
+examples/*/PartialLib.tla
