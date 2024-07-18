@@ -4,19 +4,19 @@
 cd "test"
 
 cd "synch"
-ln -s ../../client/NetClient.tla
+ln -s ../../examples/simpleclient/NetClient.tla
 ln -s ../../lib/NetChannel.tla
 ln -s ../../lib/SynchLib.tla
 cd ".."
 
 cd "asynch"
-ln -s ../../client/NetClient.tla
+ln -s ../../examples/simpleclient/NetClient.tla
 ln -s ../../lib/NetChannel.tla
 ln -s ../../lib/AsynchLib.tla
 cd ".."
 
 cd "partial"
-ln -s ../../client/NetClient.tla
+ln -s ../../examples/simpleclient/NetClient.tla
 ln -s ../../lib/NetChannel.tla
 ln -s ../../lib/PartialLib.tla
 cd ".."
