@@ -1,82 +1,59 @@
 ------------------------------- MODULE TwoPhase ----------------------------- 
+EXTENDS TLC, Integers, Sequences
 
-EXTENDS Sequences, Naturals, Integers
+VARIABLES t, sentMsgs, deliveredMsgs, payloads, rmState, tmState, tmPrepared
 
-VARIABLES msgs, rmState, tmState, tmPrepared
+vars == <<t, sentMsgs, deliveredMsgs, payloads, rmState, tmState, tmPrepared>>
 
-vars == <<msgs, rmState, tmState, tmPrepared>>
+clientVars == <<payloads, rmState, tmState, tmPrepared>>
+netVars == <<t, sentMsgs, deliveredMsgs>>
 
 RMs == {"rm1", "rm2", "rm3"} 
 
-Message ==
-  [type : {"Prepared"}, theRM : RMs]  \cup  [type : {"Commit", "Abort"}]
+Net == INSTANCE SynchLib WITH 
+    t <- t,
+    sentMsgs <- sentMsgs,
+    deliveredMsgs <- deliveredMsgs
+
+Client == INSTANCE TwoClient WITH
+    msgs <- payloads,
+    rmState <- rmState,
+    tmState <- tmState,
+    tmPrepared <- tmPrepared
 
 
-Init ==   
-  /\ msgs = {}
-  /\ rmState = [rm \in RMs |-> "working"]
-  /\ tmState = "init"
-  /\ tmPrepared = {}
+\***** COMPOSED OPERATIONS
 
-SndPrepare(rm) == 
-  /\ msgs' = msgs \cup {[type |-> "Prepared", theRM |-> rm]}
-  /\ rmState[rm] = "working"
-  /\ rmState' = [rmState EXCEPT![rm] = "prepared"]
-  /\ UNCHANGED <<tmState, tmPrepared>>
+EnqueueMsg == Client!SndMsg /\ UNCHANGED<<netVars>>
 
-RcvPrepare(rm) ==
-  /\ [type |-> "Prepared", theRM |-> rm] \in msgs
-  /\ tmState = "init"
-  /\ tmPrepared' = tmPrepared \cup {rm}
-  /\ UNCHANGED <<msgs, tmState, rmState>>
+SndMsg(payload) == UNCHANGED<<clientVars>> /\ Net!SndMsg(payload)
 
-SndCommit(rm) ==
-  /\ msgs' = msgs \cup {[type |-> "Commit"]}
-  /\ tmState \in {"init", "committed"}
-  /\ tmPrepared = RMs
-  /\ tmState' = "committed"
-  /\ UNCHANGED <<tmPrepared, rmState>>
+DeliverMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DeliverMsg(msg)
 
-RcvCommit(rm) ==
-  /\ [type |-> "Commit"] \in msgs
-  /\ rmState' = [rmState EXCEPT![rm] = "committed"]
-  /\ UNCHANGED <<msgs, tmState, tmPrepared>>
+DequeueMsg(msg) == Client!RcvMsg(msg.payload) /\ UNCHANGED<<netVars>>
 
-SndAbort(rm) ==
-  /\ msgs' = msgs \cup {[type |-> "Abort"]}
-  /\ tmState \in {"init", "aborted"}
-  /\ tmState' = "aborted"
-  /\ UNCHANGED <<tmPrepared, rmState>>
+\* TODO: turn this into model checked version.
+IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
-RcvAbort(rm) ==
-  /\ [type |-> "Abort"] \in msgs
-  /\ rmState' = [rmState EXCEPT![rm] = "aborted"]
-  /\ UNCHANGED <<msgs, tmState, tmPrepared>>
-  
-SilentAbort(rm) ==
-  /\ rmState[rm] = "working"
-  /\ rmState' = [rmState EXCEPT![rm] = "aborted"]
-  /\ UNCHANGED <<tmState, tmPrepared, msgs>>
+TypeOK == Net!TypeOK
 
+\***** Imported safety properties
+
+Consistent == Client!Consistent
+AllRcvedSent == Net!AllRcvedSent
+AllRcvedInTime == Net!AllRcvedInTime
+
+
+\***** SPECIFICATION
+
+Init == Client!Init /\ Net!Init
 
 Next ==
-    \E rm \in RMs :
-        \/ SndPrepare(rm)
-        \/ RcvPrepare(rm)
-        \/ SndCommit(rm)
-        \/ RcvCommit(rm)
-        \/ SndAbort(rm)
-        \/ RcvAbort(rm)
-        \/ SilentAbort(rm)
+    \/ EnqueueMsg
+    \/ \E payload \in payloads: SndMsg(payload)
+    \/ \E msg \in sentMsgs: DeliverMsg(msg)
+    \/ \E msg \in deliveredMsgs: DequeueMsg(msg)
 
 Spec == Init /\ [][Next]_vars
-
-TypeOK ==
-  /\ msgs \in SUBSET Message
-  /\ rmState \in [RMs -> {"working", "prepared", "committed", "aborted"}]
-  /\ tmState \in {"init", "committed", "aborted"}
-  /\ tmPrepared \in SUBSET RMs
-
-Consistent == \A rm1,rm2 \in RMs : ~(rmState[rm1] = "aborted" /\ rmState[rm2] = "committed")
 
 =============================================================================

@@ -63,7 +63,7 @@ SilentAbort(rm) ==
 
 \***** NETLIB-EXPOSED API
 
-SndMsg(payload) ==
+SndMsg ==
     \E rm \in RMs:
         \/ SndPrepare(rm)
         \/ SndAbort(rm)
@@ -85,9 +85,19 @@ Init ==
   /\ tmPrepared = {}
 
 Next == 
-    \/ SndMsg("")
+    \/ SndMsg
     \/ \E msg \in msgs: RcvMsg(msg)
 
 Spec == Init /\ [][Next]_vars
+
+TypeOK ==
+  /\ msgs \in SUBSET Message
+  /\ rmState \in [RMs -> {"working", "prepared", "committed", "aborted"}]
+  /\ tmState \in {"init", "committed", "aborted"}
+  /\ tmPrepared \in SUBSET RMs
+
+\***** SAFETY PROPERTIES
+
+Consistent == \A rm1,rm2 \in RMs : ~(rmState[rm1] = "aborted" /\ rmState[rm2] = "committed")
 
 ====
