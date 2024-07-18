@@ -60,7 +60,7 @@ SilentAbort(rm) ==
 
 \***** NETLIB-EXPOSED API
 
-SndMsg ==
+PrepareMsg ==
     \E rm \in RMs:
         \/ SndPrepare(rm)
         \/ SndAbort(rm)
@@ -81,8 +81,9 @@ Init ==
   /\ tmState = "init"
   /\ tmPrepared = {}
 
+\* There is no sendMsg because the client is unconcerned with the network!
 Next == 
-    \/ SndMsg
+    \/ PrepareMsg
     \/ \E msg \in msgs: RcvMsg(msg)
 
 Spec == Init /\ [][Next]_vars

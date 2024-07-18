@@ -24,7 +24,7 @@ Client == INSTANCE TwoClient WITH
 
 \***** COMPOSED OPERATIONS
 
-EnqueueMsg == Client!SndMsg /\ UNCHANGED<<netVars>>
+PrepareMsg == Client!PrepareMsg /\ UNCHANGED<<netVars>>
 
 SndMsg(payload) == UNCHANGED<<clientVars>> /\ Net!SndMsg(payload)
 
@@ -49,7 +49,7 @@ AllRcvedInTime == Net!AllRcvedInTime
 Init == Client!Init /\ Net!Init
 
 Next ==
-    \/ EnqueueMsg
+    \/ PrepareMsg
     \/ \E payload \in payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
     \/ \E msg \in deliveredMsgs: DequeueMsg(msg)
