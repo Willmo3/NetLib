@@ -35,7 +35,7 @@ DeliverMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DeliverMsg(msg)
 RcvMsg(msg) == Client!RcvMsg(msg.payload) /\ UNCHANGED<<netVars>>
 
 \* TODO: turn this into model checked version.
-IncTime == UNCHANGED <<clientVars>> /\ FALSE /\ Net!IncTime
+IncTime == UNCHANGED <<clientVars>> /\ t < 4 /\ Net!IncTime
 
 TypeOK == Net!TypeOK
 
@@ -55,6 +55,7 @@ Next ==
     \/ \E payload \in preparedPayloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
     \/ \E msg \in deliveredMsgs: RcvMsg(msg)
+    \/ IncTime
 
 Spec == Init /\ [][Next]_vars
 

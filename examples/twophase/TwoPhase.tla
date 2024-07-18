@@ -53,6 +53,7 @@ Next ==
     \/ \E payload \in payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
     \/ \E msg \in deliveredMsgs: DequeueMsg(msg)
+    \/ IncTime
 
 Spec == Init /\ [][Next]_vars
 
