@@ -71,6 +71,7 @@ PrepareMsg ==
 
 \* SentMessages represent messages that have been sent over the network.
 SndMsg(payload) ==
+    /\ payload \in preparedMsgs
     /\ payload \notin sentMsgs
     /\ sentMsgs' = sentMsgs \cup {payload}
     /\ UNCHANGED <<preparedMsgs, rmState, tmState, tmPrepared>>
