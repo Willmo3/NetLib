@@ -27,8 +27,8 @@ cd ".."
 cd "examples"
 
 cd "twophase"
-ln -s ../lib/NetChannel.tla
-ln -s ../lib/SynchLib.tla
+ln -s ../../lib/NetChannel.tla
+ln -s ../../lib/SynchLib.tla
 cd ".."
 
 cd ".."

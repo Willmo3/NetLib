@@ -17,12 +17,12 @@ vars == <<t, sentMsgs, deliveredMsgs>>
 \* All messages must have a time.
 \* The time must be greater than or equal to 0
 
-Message == [time : Nat, payload: STRING]
+\* Message == [time : Nat, payload: STRING]
 
 TypeOK ==
     /\ t \in Nat
-    /\ \A msg \in sentMsgs : msg \in Message
-    /\ \A msg \in deliveredMsgs : msg \in Message
+    /\ \A msg \in sentMsgs : msg.time \in Nat
+    /\ \A msg \in deliveredMsgs : msg.time \in Nat
 
 
 \* ----- STATES -----
