@@ -34,8 +34,13 @@ DeliverMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DeliverMsg(msg)
 
 RcvMsg(msg) == Client!RcvMsg(msg.payload) /\ UNCHANGED<<netVars>>
 
-\* TODO: turn this into model checked version.
 IncTime == UNCHANGED <<clientVars>> /\ t < 4 /\ Net!IncTime
+
+\* Fault operations
+
+\* For model checking purposes, only duplicate messages up to a certain time.
+DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ t < 4 /\ Net!DuplicateMsg(msg)
+
 
 TypeOK == Net!TypeOK
 
@@ -57,6 +62,12 @@ Next ==
     \/ \E msg \in deliveredMsgs: RcvMsg(msg)
     \/ IncTime
 
-Spec == Init /\ [][Next]_vars
+\* Faulty nexts
+
+DupNext ==
+    \/ Next
+    \/ \E msg \in sentMsgs: DuplicateMsg(msg)
+
+Spec == Init /\ [][DupNext]_vars
 
 =============================================================================
