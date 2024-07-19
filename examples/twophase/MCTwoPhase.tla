@@ -24,7 +24,7 @@ Client == INSTANCE MCTwoClient WITH
     tmPrepared <- tmPrepared
 
 
-\***** COMPOSED OPERATIONS
+\* ----- COMPOSED OPERATIONS -----
 
 PrepareMsg == Client!PrepareMsg /\ UNCHANGED<<netVars>>
 
@@ -39,14 +39,14 @@ IncTime == UNCHANGED <<clientVars>> /\ t < 4 /\ Net!IncTime
 
 TypeOK == Net!TypeOK
 
-\***** Imported safety properties
+\* ----- Imported safety properties -----
 
 Consistent == Client!Consistent
 AllRcvedSent == Net!AllRcvedSent
 AllRcvedInTime == Net!AllRcvedInTime
 
 
-\***** SPECIFICATION
+\* ----- SPECIFICATION
 
 Init == Client!Init /\ Net!Init
 

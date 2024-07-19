@@ -22,7 +22,7 @@ Client == INSTANCE TwoClient WITH
     tmPrepared <- tmPrepared
 
 
-\***** COMPOSED OPERATIONS
+\* ----- COMPOSED OPERATIONS -----
 
 PrepareMsg == Client!PrepareMsg /\ UNCHANGED<<netVars>>
 
@@ -37,14 +37,14 @@ IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
 TypeOK == Net!TypeOK
 
-\***** Imported safety properties
+\* ----- Imported safety properties -----
 
 Consistent == Client!Consistent
 AllRcvedSent == Net!AllRcvedSent
 AllRcvedInTime == Net!AllRcvedInTime
 
 
-\***** SPECIFICATION
+\* ----- SPECIFICATION -----
 
 Init == Client!Init /\ Net!Init
 

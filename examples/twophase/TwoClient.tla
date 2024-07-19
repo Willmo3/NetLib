@@ -11,7 +11,7 @@ Message ==
   [type : {"Prepared"}, theRM : RMs]  \cup  [type : {"Commit", "Abort"}]
 
 
-\***** INTERNAL STATES
+\* ----- INTERNAL STATES -----
 
 \* Message senders do not care about payloads.
 SndPrepare(rm) == 
@@ -58,7 +58,7 @@ SilentAbort(rm) ==
   /\ UNCHANGED <<tmState, tmPrepared, msgs>>
 
 
-\***** NETLIB-EXPOSED API
+\* ----- NETLIB-EXPOSED API -----
 
 PrepareMsg ==
     \E rm \in RMs:
@@ -73,7 +73,7 @@ RcvMsg(payload) ==
         \/ RcvAbort(rm, payload)
 
 
-\***** SPECIFICATION
+\* ----- SPECIFICATION -----
 
 Init ==   
   /\ msgs = {}
