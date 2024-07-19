@@ -49,6 +49,31 @@ IncTime ==
     /\ UNCHANGED<<sentMsgs, deliveredMsgs>>
 
 
+\* ----- FAULTS -----
+\* Used for deviation models in robustness.
+
+\* Duplicate a message that has already been sent
+\* Note that this message may have been delivered!
+DuplicateMsg(msg) ==
+    /\ msg \in sentMsgs
+    /\ sentMsgs' = sentMsgs \cup {[time |-> t, payload |-> msg.payload]}
+    /\ t' = t + 1
+    /\ UNCHANGED <<deliveredMsgs>>
+
+\* Drop a message that has been sent but not yet delivered. 
+DropMsg(msg) ==
+    /\ msg \in sentMsgs
+    /\ msg \notin deliveredMsgs
+    /\ sentMsgs' = sentMsgs \ msg 
+    /\ UNCHANGED <<t, deliveredMsgs>>
+
+\* A corrupted message takes an already sent message and gives it a new payload. 
+CorruptMsg(msg, payload) ==
+    /\ msg \in sentMsgs
+    /\ msg \notin deliveredMsgs
+    /\ sentMsgs' = (sentMsgs \ msg) \cup {[time |-> msg.time, payload |-> payload]}
+
+
 \* ----- SAFETY PROPERTIES -----
 
 \* For all recieved messages,

@@ -57,6 +57,15 @@ IncTime ==
     /\ ~UrgentMsg
     /\ Channel!IncTime
 
+\* ----- FAULTS -----
+\* Some of these faults change the character of a synchronous network -- for instance, messages being dropped.
+
+DropMsg(msg) == Channel!DropMsg(msg)
+
+DuplicateMsg(msg) == Channel!DuplicateMsg(msg)
+
+CorruptMsg(msg, payload) == Channel!CorruptMsg(msg, payload)
+
 
 \* ----- MODEL RUNNERS -----
 
