@@ -62,7 +62,9 @@ IncTime ==
 
 DropMsg(msg) == Channel!DropMsg(msg)
 
-DuplicateMsg(msg) == Channel!DuplicateMsg(msg)
+DuplicateMsg(msg) == 
+    /\ ~UrgentMsg
+    /\ Channel!DuplicateMsg(msg)
 
 CorruptMsg(msg, payload) == Channel!CorruptMsg(msg, payload)
 
