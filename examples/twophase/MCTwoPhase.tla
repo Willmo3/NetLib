@@ -38,7 +38,7 @@ IncTime == UNCHANGED<<clientVars>> /\ t < 4 /\ Net!IncTime
 \* Fault operations
 
 \* For model checking purposes, only duplicate messages up to a certain time.
-DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ t < 4 /\ Net!DuplicateMsg(msg)
+DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!DuplicateMsg(msg)
 
 TypeOK == Net!TypeOK
 
