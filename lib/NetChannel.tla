@@ -60,18 +60,18 @@ DuplicateMsg(msg) ==
     /\ t' = t + 1
     /\ UNCHANGED <<deliveredMsgs>>
 
-\* Drop a message that has been sent but not yet delivered. 
+\* Drop a message that has not yet been delivered. 
 DropMsg(msg) ==
-    /\ msg \in sentMsgs
     /\ msg \notin deliveredMsgs
     /\ sentMsgs' = sentMsgs \ msg 
     /\ UNCHANGED <<t, deliveredMsgs>>
 
 \* A corrupted message takes an already sent message and gives it a new payload. 
-CorruptMsg(msg, payload) ==
+CorruptMsg(msg, newpayload) ==
     /\ msg \in sentMsgs
     /\ msg \notin deliveredMsgs
-    /\ sentMsgs' = (sentMsgs \ msg) \cup {[time |-> msg.time, payload |-> payload]}
+    /\ sentMsgs' = (sentMsgs \ {msg}) \cup {[time |-> msg.time, payload |-> newpayload]}
+    /\ UNCHANGED <<t, deliveredMsgs>>
 
 
 \* ----- SAFETY PROPERTIES -----
