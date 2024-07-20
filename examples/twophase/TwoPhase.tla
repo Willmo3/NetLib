@@ -28,9 +28,7 @@ PrepareMsg == Client!PrepareMsg /\ UNCHANGED<<netVars>>
 
 SndMsg(payload) == UNCHANGED<<clientVars>> /\ Net!SndMsg(payload)
 
-DeliverMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DeliverMsg(msg)
-
-DequeueMsg(msg) == Client!RcvMsg(msg.payload) /\ UNCHANGED<<netVars>>
+DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
 IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
@@ -57,7 +55,6 @@ Next ==
     \/ PrepareMsg
     \/ \E payload \in payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
-    \/ \E msg \in deliveredMsgs: DequeueMsg(msg)
     \/ IncTime
 
 \* Faulty nexts

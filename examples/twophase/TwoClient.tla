@@ -72,6 +72,12 @@ RcvMsg(payload) ==
         \/ RcvCommit(rm, payload)
         \/ RcvAbort(rm, payload)
 
+\* Generate a corrupted message.
+\* Message corruption is fundamentally domain-specific, so NetLib cannot specify it.
+\* For our purposes, we use a single payload.
+\* This is sufficient to prove the protocol is not robust against corruption.
+CorruptMsg(rm) == [type |-> "Prepared", theRM |-> rm]
+    
 
 \* ----- SPECIFICATION -----
 
