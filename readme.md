@@ -1,4 +1,4 @@
-# NetLib  
+# RobustNet  
   
 A TLA+ library for network communication!  
   
@@ -13,13 +13,13 @@ a software system can withstand in its environment while still functioning.
   
 With this decoupling of system and environment comes a need for modular environmental modeling libraries.  
   
-We present NetLib, a TLA+ library for modeling network communication. We will support three standard network models:  
+We present RobustNet, a TLA+ library for modeling network communication. We will support three standard network models:  
   
 1. Synchronous  
 2. Asynchronous  
 3. Partially Synchronous  
   
-NetLib encapsulates common network environmental assumptions in a modular way, enabling modelers to quickly evaluate robustness under varied conditions while evading tight coup  
+RobustNet encapsulates common network environmental assumptions in a modular way, enabling modelers to quickly evaluate robustness under varied conditions while evading tight coup  
 ling between system and environmental models.  
   
 ## Design  
@@ -75,10 +75,10 @@ In order to ensure that all messages arrive at some finite time, fairness guaran
   
 ## Usage  
   
-Because TLA+ is not a standard programming language, NetLib cannot be used via some simple import statement. Instead, one must define a *parallel composition* of their model with NetLib. For examples of this, please view our testing files.  
+Because TLA+ is not a standard programming language, RobustNet cannot be used via some simple import statement. Instead, one must define a *parallel composition* of their model with RobustNet. For examples of this, please view our testing files.  
   
 We define a network in two models:  
-1. NetLib, representing the actual network channel  
+1. RobustNet, representing the actual network channel  
 2. NetClient, representing the clients  
   
 And compose these two models together.  
