@@ -1,4 +1,4 @@
-------------------------------- MODULE TwoClient ----------------------------- 
+------------------------------- MODULE Sys ----------------------------- 
 EXTENDS Sequences, Naturals, Integers
 
 VARIABLES msgs, rmState, tmState, tmPrepared

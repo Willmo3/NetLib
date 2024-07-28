@@ -15,7 +15,7 @@ Net == INSTANCE SynchLib WITH
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
 
-Client == INSTANCE TwoClient WITH
+Sys == INSTANCE Sys WITH
     msgs <- payloads,
     rmState <- rmState,
     tmState <- tmState,
@@ -24,11 +24,11 @@ Client == INSTANCE TwoClient WITH
 
 \* ----- COMPOSED OPERATIONS -----
 
-PrepareMsg == Client!PrepareMsg /\ UNCHANGED<<netVars>>
+PrepareMsg == Sys!PrepareMsg /\ UNCHANGED<<netVars>>
 
 SndMsg(payload) == UNCHANGED<<clientVars>> /\ Net!SndMsg(payload)
 
-DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
+DeliverMsg(msg) == Sys!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
 IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
@@ -42,14 +42,14 @@ TypeOK == Net!TypeOK
 
 \* ----- Imported safety properties -----
 
-Consistent == Client!Consistent
+Consistent == Sys!Consistent
 AllRcvedSent == Net!AllRcvedSent
 AllRcvedInTime == Net!AllRcvedInTime
 
 
 \* ----- SPECIFICATION -----
 
-Init == Client!Init /\ Net!Init
+Init == Sys!Init /\ Net!Init
 
 Next ==
     \/ PrepareMsg

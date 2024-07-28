@@ -16,7 +16,7 @@ Net == INSTANCE SynchLib WITH
     sentMsgs <- sentMsgs,
     deliveredMsgs <- deliveredMsgs
 
-Client == INSTANCE TwoClient WITH
+Sys == INSTANCE Sys WITH
     msgs <- payloads,
     rmState <- rmState,
     tmState <- tmState,
@@ -25,13 +25,13 @@ Client == INSTANCE TwoClient WITH
 
 \* ----- COMPOSED OPERATIONS -----
 
-PrepareMsg == Client!PrepareMsg /\ UNCHANGED<<netVars>>
+PrepareMsg == Sys!PrepareMsg /\ UNCHANGED<<netVars>>
 
 \* To allow termination, eventually stop sending messages.
 SndMsg(payload) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!SndMsg(payload)
 
 \* For simplicity, client recieves message as soon as it's delivered.
-DeliverMsg(msg) == Client!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
+DeliverMsg(msg) == Sys!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 
 IncTime == UNCHANGED<<clientVars>> /\ t < 4 /\ Net!IncTime
 
@@ -44,14 +44,14 @@ TypeOK == Net!TypeOK
 
 \* ----- Imported safety properties -----
 
-Consistent == Client!Consistent
+Consistent == Sys!Consistent
 AllRcvedSent == Net!AllRcvedSent
 AllRcvedInTime == Net!AllRcvedInTime
 
 
 \* ----- SPECIFICATION
 
-Init == Client!Init /\ Net!Init
+Init == Sys!Init /\ Net!Init
 
 Next ==
     \/ PrepareMsg
