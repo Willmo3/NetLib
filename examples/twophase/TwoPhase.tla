@@ -40,6 +40,9 @@ DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DuplicateMsg(msg)
 \* Since message corruption is domain-specific, we have to use client code.
 CorruptMsg(msg) == UNCHANGED<<clientVars>> /\ Net!CorruptMsg(msg, Sys!CorruptMsg)
 
+DropMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DropMsg(msg)
+
+
 
 TypeOK == Net!TypeOK
 
@@ -70,7 +73,11 @@ CorruptNext ==
     \/ Next
     \/ \E msg \in sentMsgs: CorruptMsg(msg)
 
+DropNext ==
+    \/ Next
+    \/ \E msg \in sentMsgs: DropMsg(msg)
+
 \* Change the next to try different fault configurations!
-Spec == Init /\ [][CorruptNext]_vars
+Spec == Init /\ [][DropNext]_vars
 
 =============================================================================

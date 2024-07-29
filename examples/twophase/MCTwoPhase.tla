@@ -36,12 +36,14 @@ DeliverMsg(msg) == Sys!RcvMsg(msg.payload) /\ Net!DeliverMsg(msg)
 IncTime == UNCHANGED<<clientVars>> /\ t < 4 /\ Net!IncTime
 
 \* Fault operations
+\* For model checking purposes, only perform these faults up to a certain time.
 
-\* For model checking purposes, only duplicate messages up to a certain time.
 DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!DuplicateMsg(msg)
 
 \* Since message corruption is domain-specific, we have to use client code.
 CorruptMsg(msg) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!CorruptMsg(msg, Sys!CorruptMsg)
+
+DropMsg(msg) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!DropMsg(msg)
 
 TypeOK == Net!TypeOK
 
@@ -72,7 +74,11 @@ CorruptNext ==
     \/ Next
     \/ \E msg \in sentMsgs: CorruptMsg(msg)
 
+DropNext ==
+    \/ Next
+    \/ \E msg \in sentMsgs: DropMsg(msg)
+
 \* Change the spec to evaluate against a fault configuration.
-Spec == Init /\ [][CorruptNext]_vars
+Spec == Init /\ [][DropNext]_vars
 
 =============================================================================

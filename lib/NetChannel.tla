@@ -63,7 +63,7 @@ DuplicateMsg(msg) ==
 \* Drop a message that has not yet been delivered. 
 DropMsg(msg) ==
     /\ msg \notin deliveredMsgs
-    /\ sentMsgs' = sentMsgs \ msg 
+    /\ sentMsgs' = sentMsgs \ {msg} 
     /\ UNCHANGED <<t, deliveredMsgs>>
 
 \* A corrupted message takes an already sent message and gives it a new payload. 
