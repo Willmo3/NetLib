@@ -78,7 +78,11 @@ DropNext ==
     \/ Next
     \/ \E msg \in sentMsgs: DropMsg(msg)
 
+DropDupNext ==
+    \/ DropNext
+    \/ DupNext
+
 \* Change the spec to evaluate against a fault configuration.
-Spec == Init /\ [][DropNext]_vars
+Spec == Init /\ [][DropDupNext]_vars
 
 =============================================================================
