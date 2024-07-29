@@ -76,7 +76,7 @@ RcvMsg(payload) ==
 \* Message corruption is fundamentally domain-specific, so NetLib cannot specify it.
 \* For our purposes, we use a single payload.
 \* This is sufficient to prove the protocol is not robust against corruption.
-CorruptMsg(rm) == [type |-> "Prepared", theRM |-> rm]
+CorruptMsg == [type |-> "Commit"]
     
 
 \* ----- SPECIFICATION -----

@@ -40,6 +40,9 @@ IncTime == UNCHANGED<<clientVars>> /\ t < 4 /\ Net!IncTime
 \* For model checking purposes, only duplicate messages up to a certain time.
 DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!DuplicateMsg(msg)
 
+\* Since message corruption is domain-specific, we have to use client code.
+CorruptMsg(msg) == UNCHANGED<<clientVars>> /\ t < 6 /\ Net!CorruptMsg(msg, Sys!CorruptMsg)
+
 TypeOK == Net!TypeOK
 
 \* ----- Imported safety properties -----
@@ -65,6 +68,11 @@ DupNext ==
     \/ Next
     \/ \E msg \in sentMsgs: DuplicateMsg(msg)
 
-Spec == Init /\ [][Next]_vars
+CorruptNext ==
+    \/ Next
+    \/ \E msg \in sentMsgs: CorruptMsg(msg)
+
+\* Change the spec to evaluate against a fault configuration.
+Spec == Init /\ [][CorruptNext]_vars
 
 =============================================================================

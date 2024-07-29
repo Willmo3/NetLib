@@ -37,6 +37,9 @@ IncTime == UNCHANGED <<clientVars>> /\ Net!IncTime
 
 DuplicateMsg(msg) == UNCHANGED<<clientVars>> /\ Net!DuplicateMsg(msg)
 
+\* Since message corruption is domain-specific, we have to use client code.
+CorruptMsg(msg) == UNCHANGED<<clientVars>> /\ Net!CorruptMsg(msg, Sys!CorruptMsg)
+
 
 TypeOK == Net!TypeOK
 
@@ -63,6 +66,11 @@ DupNext ==
     \/ Next
     \/ \E msg \in sentMsgs: DuplicateMsg(msg)
 
-Spec == Init /\ [][DupNext]_vars
+CorruptNext ==
+    \/ Next
+    \/ \E msg \in sentMsgs: CorruptMsg(msg)
+
+\* Change the next to try different fault configurations!
+Spec == Init /\ [][CorruptNext]_vars
 
 =============================================================================
