@@ -82,6 +82,6 @@ DropDupNext ==
     \/ DupNext
 
 \* Change the next to try different fault configurations!
-Spec == Init /\ [][DropDupNext]_vars
+Spec == Init /\ [][Next]_vars
 
 =============================================================================

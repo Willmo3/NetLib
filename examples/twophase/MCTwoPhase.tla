@@ -53,19 +53,20 @@ Consistent == Sys!Consistent
 AllRcvedSent == Net!AllRcvedSent
 AllRcvedInTime == Net!AllRcvedInTime
 
-
+s
 \* ----- SPECIFICATION
 
 Init == Sys!Init /\ Net!Init
 
+\* The normative environment
 Next ==
     \/ PrepareMsg
     \/ \E payload \in payloads: SndMsg(payload)
     \/ \E msg \in sentMsgs: DeliverMsg(msg)
     \/ IncTime
 
-\* Faulty nexts
-
+\* A deviated environment 
+\* where messages may be randomly duplicated.
 DupNext ==
     \/ Next
     \/ \E msg \in sentMsgs: DuplicateMsg(msg)
@@ -83,6 +84,6 @@ DropDupNext ==
     \/ DupNext
 
 \* Change the spec to evaluate against a fault configuration.
-Spec == Init /\ [][DropDupNext]_vars
+Spec == Init /\ [][Next]_vars
 
 =============================================================================
