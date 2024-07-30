@@ -62,6 +62,14 @@ In a partially synchronous network, there exists an upper bound on message deliv
 Hence, we offer the AllRcvedInTimeAfterHiddenDelta guarantee. While this guarantee references our private delta variable, it's internal to our project. This does not take away from the fact that the actual value of the hidden delta is unknown to outside interlopers.  
 
 As an aside: the GST definition of partial synchrony is equivalent to the unknown delta definition. For ease of implementation, we've chosen to use the hidden delta definition, but it should not make a difference to an external view of the network.
+
+### Faults
+
+As a tool for robustness analysis, RobustNet contains predefined faults. Note that these only apply to synchronous networks.
+
+ - DropMsg
+ - DupMsg
+ - CorruptMsg
   
 ### Implementation  
 
