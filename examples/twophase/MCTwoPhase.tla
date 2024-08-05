@@ -53,7 +53,6 @@ Consistent == Sys!Consistent
 AllRcvedSent == Net!AllRcvedSent
 AllRcvedInTime == Net!AllRcvedInTime
 
-s
 \* ----- SPECIFICATION
 
 Init == Sys!Init /\ Net!Init
